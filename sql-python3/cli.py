@@ -1,8 +1,15 @@
 import sys
+import os
 from antlr4 import *
 from sqlLexer import sqlLexer
 from sqlParser import sqlParser
+from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
+
+class GeneralListener(sqlListener):
+    def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
+        os.mkdir(ctx.database_name().getText())
+        #   print("Hello world. At the input has been already validated")
 
 class ParserException(Exception):
     def __init__(self, value):
@@ -28,10 +35,14 @@ def parse(text):
     # Este es el nombre de la produccion inicial de la gramatica definida en sql.g4
     tree = parser.parse()
 
+    testListener = GeneralListener()
+    walker = ParseTreeWalker()
+    walker.walk(testListener, tree)
+
 '''
 Uso: python cli.py
 
-Las construcciones validas para esta gramatica son todas aquellas 
+Las construcciones validas para esta gramatica son todas aquellas
 '''
 def main(argv):
     while True:
