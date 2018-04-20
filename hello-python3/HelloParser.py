@@ -4,6 +4,7 @@ from antlr4 import *
 from io import StringIO
 from typing.io import TextIO
 import sys
+from "../sql-python3/sqlParser.py" import sqlParser
 
 def serializedATN():
     with StringIO() as buf:
@@ -13,7 +14,7 @@ def serializedATN():
         return buf.getvalue()
 
 
-class HelloParser ( Parser ):
+class HelloParser ( sqlParser ):
 
     grammarFileName = "Hello.g4"
 
@@ -84,8 +85,3 @@ class HelloParser ( Parser ):
         finally:
             self.exitRule()
         return localctx
-
-
-
-
-
