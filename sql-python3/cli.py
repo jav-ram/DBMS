@@ -10,7 +10,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = '/databases/'
+userpath = 'databases/'
 db = ""
 
 class GeneralListener(sqlListener):
@@ -36,13 +36,14 @@ class GeneralListener(sqlListener):
             print("Ahora esta usando la base de datos " + db)
         else:
             print("No existe la base de datos!")
+
     # Exit a parse tree produced by sqlParser#create_table_stmt.
     def exitCreate_table_stmt(self, ctx:sqlParser.Create_table_stmtContext):
         global db
         if db != "":
             tableName = ctx.table_name().getText()
             #Buscar si ya existe
-            existe = pathlib.Path(userpath + "/" + db + +"/"+ tableName).exists()
+            existe = pathlib.Path(userpath + "/" + db +"/"+ tableName).exists()
             if existe:
                 print("Ya existe esta tabla")
             else:
