@@ -23,10 +23,13 @@ class GeneralListener(sqlListener):
 
     # Exit a parse tree produced by sqlParser#use_database_stmt.
     def exitUse_database_stmt(self, ctx:sqlParser.Use_database_stmtContext):
-        if os.path.isdir(userpath + db):
+        existe = pathlib.Path(userpath + ctx.database_name().getText()).exists()
+        if existe:
             db = ctx.database_name().getText()
+            print("Ahora esta usando la base de datos " + db)
         else:
-            print("NO ESTA EL ARCHIVO!")
+            print("No existe la base de datos!")
+
         pass
 
 class ParserException(Exception):
