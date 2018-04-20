@@ -8,7 +8,7 @@ from sqlParser import sqlParser
 from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
-userpath = '/databases/'
+userpath = 'databases/'
 
 class GeneralListener(sqlListener):
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
@@ -19,10 +19,6 @@ class GeneralListener(sqlListener):
     def exitAlter_database_stmt(self, ctx:sqlParser.Alter_database_stmtContext):
         old_name = pathlib.Path(userpath + ctx.database_name().getText())
         old_name.rename(userpath + ctx.new_database_name().getText())
-
-    def exitShow_databases_stmt(self, ctx:sqlParser.Show_databases_stmtContext):
-        # os.walk(userpath)
-        print([x[0].replace(userpath, "") for x in os.walk(userpath)])
 
 class ParserException(Exception):
     def __init__(self, value):
