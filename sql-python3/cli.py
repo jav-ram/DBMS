@@ -26,7 +26,7 @@ class GeneralListener(sqlListener):
         print("¿Esta seguro que quiere renombrar la base de datos: " + ctx.database_name().getText() + " por " + ctx.new_database_name().getText() + "?")
         print("Y/N para proceder")
         respuesta = input()
-        if (respuesta == "Y"):
+        if (respuesta == "Y" or respuesta == "y"):
             print("El nombre de la base de datos: " + ctx.database_name().getText() + "ha cambiado a: " + ctx.new_database_name().getText())
             old_name.rename(userpath + ctx.new_database_name().getText())
         else:
@@ -66,7 +66,7 @@ class GeneralListener(sqlListener):
         print("¿Esta seguro de que quiere eliminar la base de datos: " +ctx.database_name().getText() + "  con N Registros?")
         print("Y/N para proceder")
         respuesta = input()
-        if (respuesta == "Y"):
+        if (respuesta == "Y" or respuesta == "y"):
             print("Se elimino la base de datos: " + ctx.database_name().getText())
             shutil.rmtree(userpath + ctx.database_name().getText(), ignore_errors=True)
         else:
