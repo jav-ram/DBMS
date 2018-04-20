@@ -8,15 +8,17 @@ from sqlParser import sqlParser
 from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
+userpath = '/databases/'
+
 class GeneralListener(sqlListener):
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
         # os.mkdir(ctx.database_name().getText())
-        pathlib.Path('/databases/' + ctx.database_name().getText()).mkdir(parents=True, exist_ok=True)
+        pathlib.Path(userpath + ctx.database_name().getText()).mkdir(parents=True, exist_ok=True)
         #   print("Hello world. At the input has been already validated")
 
     def exitAlter_database_stmt(self, ctx:sqlParser.Alter_database_stmtContext):
-        old_name = pathlib.Path('/databases/' + ctx.database_name().getText())
-        old_name.rename('/databases/' + ctx.new_database_name().getText())
+        old_name = pathlib.Path(userpath + ctx.database_name().getText())
+        old_name.rename(userpath + ctx.new_database_name().getText())
 
 class ParserException(Exception):
     def __init__(self, value):
