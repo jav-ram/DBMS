@@ -9,7 +9,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 userpath = 'databases/'
-db = ''
+db = ""
 
 class GeneralListener(sqlListener):
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
@@ -24,8 +24,10 @@ class GeneralListener(sqlListener):
     def exitShow_databases_stmt(self, ctx:sqlParser.Show_databases_stmtContext):
         # os.walk(userpath)
         print([x[0].replace(userpath, "") for x in os.walk(userpath)])
+
     # Exit a parse tree produced by sqlParser#use_database_stmt.
     def exitUse_database_stmt(self, ctx:sqlParser.Use_database_stmtContext):
+        global db
         existe = pathlib.Path(userpath + ctx.database_name().getText()).exists()
         if existe:
             db = ctx.database_name().getText()
@@ -33,7 +35,23 @@ class GeneralListener(sqlListener):
         else:
             print("No existe la base de datos!")
 
-        pass
+    # Exit a parse tree produced by sqlParser#create_table_stmt.
+    def exitCreate_table_stmt(self, ctx:sqlParser.Create_table_stmtContext):
+        global db
+        if db != "":
+            tableName = ctx.table_name().getText()
+            #Buscar si ya existe
+            existe = pathlib.Path(userpath + "/" + db + +"/"+ tableName).exists()
+            if existe:
+                print("Ya existe esta tabla")
+            else:
+                pathlib.Path(userpath + "/" + db + +"/"+ tableName).mkdir(parents=True, exist_ok=True)
+                print("Se creo nueva tabla " + tableName)
+
+        else:
+            print("No hay ninguna base de datos seleccionada")
+
+
 class ParserException(Exception):
     def __init__(self, value):
         self.value = value
