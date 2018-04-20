@@ -9,6 +9,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 userpath = 'databases/'
+db = ''
 
 class GeneralListener(sqlListener):
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
@@ -19,6 +20,14 @@ class GeneralListener(sqlListener):
     def exitAlter_database_stmt(self, ctx:sqlParser.Alter_database_stmtContext):
         old_name = pathlib.Path(userpath + ctx.database_name().getText())
         old_name.rename(userpath + ctx.new_database_name().getText())
+
+    # Exit a parse tree produced by sqlParser#use_database_stmt.
+    def exitUse_database_stmt(self, ctx:sqlParser.Use_database_stmtContext):
+        if os.path.isdir(userpath + db):
+            db = ctx.database_name().getText()
+        else:
+            print("NO ESTA EL ARCHIVO!")
+        pass
 
 class ParserException(Exception):
     def __init__(self, value):
