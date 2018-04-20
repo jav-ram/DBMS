@@ -10,18 +10,27 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = 'databases/'
+userpath = '/databases/'
 db = ""
 
 class GeneralListener(sqlListener):
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
         # os.mkdir(ctx.database_name().getText())
         pathlib.Path(userpath + ctx.database_name().getText()).mkdir(parents=True, exist_ok=True)
+        print("Base de datos: " + ctx.database_name().getText() + " Creada!")
         #   print("Hello world. At the input has been already validated")
 
     def exitAlter_database_stmt(self, ctx:sqlParser.Alter_database_stmtContext):
         old_name = pathlib.Path(userpath + ctx.database_name().getText())
-        old_name.rename(userpath + ctx.new_database_name().getText())
+
+        print("¿Esta seguro que quiere renombrar la base de datos: " + ctx.database_name().getText() + " por " + ctx.new_database_name().getText() + "?")
+        print("Y/N para proceder")
+        respuesta = input()
+        if (respuesta == "Y"):
+            print("El nombre de la base de datos: " + ctx.database_name().getText() + "ha cambiado a: " + ctx.new_database_name().getText())
+            old_name.rename(userpath + ctx.new_database_name().getText())
+        else:
+            print("No se cambio el nombre de la base de datos")
 
     def exitShow_databases_stmt(self, ctx:sqlParser.Show_databases_stmtContext):
         # os.walk(userpath)
@@ -54,8 +63,14 @@ class GeneralListener(sqlListener):
             print("No hay ninguna base de datos seleccionada")
 
     def exitDrop_database_stmt(self, ctx:sqlParser.Drop_database_stmtContext):
-        shutil.rmtree(userpath + ctx.database_name().getText(), ignore_errors=True)
-
+        print("¿Esta seguro de que quiere eliminar la base de datos: " +ctx.database_name().getText() + "  con N Registros?")
+        print("Y/N para proceder")
+        respuesta = input()
+        if (respuesta == "Y"):
+            print("Se elimino la base de datos: " + ctx.database_name().getText())
+            shutil.rmtree(userpath + ctx.database_name().getText(), ignore_errors=True)
+        else:
+            print("No se elimino ninguna base de datos")
 
 class ParserException(Exception):
     def __init__(self, value):
