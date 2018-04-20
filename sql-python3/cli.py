@@ -2,14 +2,20 @@ import sys
 import os
 #para crear bases de datos  estoy usando pathlib ya no os
 import pathlib
+import shutil
 from antlr4 import *
 from sqlLexer import sqlLexer
 from sqlParser import sqlParser
 from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
+<<<<<<< HEAD
 userpath = 'databases/'
 db = ""
+=======
+userpath = '/databases/'
+db = ''
+>>>>>>> eebcb9d580a95ff97c2178533caf8ec9c60c21b9
 
 class GeneralListener(sqlListener):
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
@@ -35,6 +41,7 @@ class GeneralListener(sqlListener):
         else:
             print("No existe la base de datos!")
 
+<<<<<<< HEAD
     # Exit a parse tree produced by sqlParser#create_table_stmt.
     def exitCreate_table_stmt(self, ctx:sqlParser.Create_table_stmtContext):
         global db
@@ -51,6 +58,12 @@ class GeneralListener(sqlListener):
         else:
             print("No hay ninguna base de datos seleccionada")
 
+=======
+        pass
+
+    def exitDrop_database_stmt(self, ctx:sqlParser.Drop_database_stmtContext):
+        shutil.rmtree(userpath + ctx.database_name().getText(), ignore_errors=True)
+>>>>>>> eebcb9d580a95ff97c2178533caf8ec9c60c21b9
 
 class ParserException(Exception):
     def __init__(self, value):
