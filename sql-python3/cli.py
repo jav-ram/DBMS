@@ -1,5 +1,7 @@
 import sys
 import os
+#para crear bases de datos  estoy usando pathlib ya no os
+import pathlib
 from antlr4 import *
 from sqlLexer import sqlLexer
 from sqlParser import sqlParser
@@ -8,8 +10,13 @@ from antlr4.error.ErrorListener import ErrorListener
 
 class GeneralListener(sqlListener):
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
-        os.mkdir(ctx.database_name().getText())
+        # os.mkdir(ctx.database_name().getText())
+        pathlib.Path('/databases/' + ctx.database_name().getText()).mkdir(parents=True, exist_ok=True)
         #   print("Hello world. At the input has been already validated")
+
+    def exitAlter_database_stmt(self, ctx:sqlParser.Alter_database_stmtContext):
+        old_name = pathlib.Path('/databases/' + ctx.database_name().getText())
+        old_name.rename('/databases/' + ctx.new_database_name().getText())
 
 class ParserException(Exception):
     def __init__(self, value):
