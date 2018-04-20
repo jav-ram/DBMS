@@ -2,13 +2,14 @@ import sys
 import os
 #para crear bases de datos  estoy usando pathlib ya no os
 import pathlib
+import shutil
 from antlr4 import *
 from sqlLexer import sqlLexer
 from sqlParser import sqlParser
 from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
-userpath = 'databases/'
+userpath = '/databases/'
 db = ''
 
 class GeneralListener(sqlListener):
@@ -34,6 +35,10 @@ class GeneralListener(sqlListener):
             print("No existe la base de datos!")
 
         pass
+
+    def exitDrop_database_stmt(self, ctx:sqlParser.Drop_database_stmtContext):
+        shutil.rmtree(userpath + ctx.database_name().getText(), ignore_errors=True)
+
 class ParserException(Exception):
     def __init__(self, value):
         self.value = value
