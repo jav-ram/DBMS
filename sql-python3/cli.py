@@ -10,7 +10,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = '/databases/'
+userpath = 'databases/'
 db = ""
 
 class GeneralListener(sqlListener):
@@ -56,8 +56,23 @@ class GeneralListener(sqlListener):
             if existe:
                 print("Ya existe esta tabla")
             else:
+                #crear folder
                 pathlib.Path(userpath + "/" + db +"/"+ tableName).mkdir(parents=True, exist_ok=True)
-                print("Se creo nueva tabla " + tableName)
+                #crear archivos
+                direccion = userpath + "/" + db +"/"+ tableName         #direccion
+                schema = open(direccion + "/schema.json", "w")          #crear schema
+                data = open(direccion + "/data.txt", "w")               #crear data
+                #llenar schema
+                schemaData = {}
+                data = []
+                for column in ctx.column_def():
+                    schemaColumn = {}
+                    schemaColumn['nombre'] = column.column_name().getText()
+                    schemaColumn['type'] = column.type_name().getText()
+                    schemaColumn['key'] = ''                                    #No se como sacar la key
+                    data.append(schemaColumn)
+                schemaData["data"] = data
+                schema.write(str(schemaData))
 
         else:
             print("No hay ninguna base de datos seleccionada")

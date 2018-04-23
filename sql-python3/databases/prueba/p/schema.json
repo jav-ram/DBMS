@@ -1,0 +1,1 @@
+{'data': [{'type': 'varchar(25)', 'key': '', 'nombre': 'nombre'}, {'type': 'int', 'key': '', 'nombre': 'numero'}, {'type': 'string', 'key': '', 'nombre': 'apellido'}]}
