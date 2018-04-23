@@ -72,6 +72,21 @@ class GeneralListener(sqlListener):
         else:
             print("No se elimino ninguna base de datos")
 
+    def exitAlter_table_stmt(self, ctx:sqlParser.Alter_table_stmtContext):
+        global db
+        if db != "":
+            tableName = ctx.table_name().getText()
+            existe = pathlib.Path(userpath + "/" + db +"/"+ tableName).exists()
+            if existe:
+                old_name = pathlib.Path(userpath + "/" + db + "/" + tableName)
+                old_name.rename(userpath + "/" + db + "/"+ ctx.new_table_name().getText())
+
+            else:
+                print("No existe la tabla que se quiere renombrar")
+
+        else:
+            print("No hay ninguna base de datos seleccionada")
+
 class ParserException(Exception):
     def __init__(self, value):
         self.value = value
