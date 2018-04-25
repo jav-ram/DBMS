@@ -149,6 +149,14 @@ class GeneralListener(sqlListener):
         else:
             print("No hay ninguna base de datos seleccionada")
 
+    # Exit a parse tree produced by sqlParser#insert_stmt.
+    def exitInsert_stmt(self, ctx:sqlParser.Insert_stmtContext):
+        global db
+        if db != "":
+            tableName = ctx.table_name().getText()
+            print (ctx.K_VALUES()[0])
+        else:
+            print("No hay ninguna base de datos seleccionada")
 
 class ParserException(Exception):
     def __init__(self, value):

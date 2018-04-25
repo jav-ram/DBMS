@@ -431,30 +431,30 @@ class sqlParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "';'", "','", "'('", "')'", "'='", "'.'", 
-                     "'*'", "'/'", "'%'", "'+'", "'-'", "'<'", "'<='", "'>'", 
+    literalNames = [ "<INVALID>", "';'", "','", "'('", "')'", "'='", "'.'",
+                     "'*'", "'/'", "'%'", "'+'", "'-'", "'<'", "'<='", "'>'",
                      "'>='", "'=='", "'!='", "'<>'", "'~'" ]
 
-    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                      "K_ADD", "K_ALTER", "K_AND", "K_AS", "K_ASC", "K_BEGIN", 
-                      "K_BY", "K_CHECK", "K_COLUMN", "K_COLUMNS", "K_COMMIT", 
-                      "K_CONSTRAINT", "K_CREATE", "K_DATABASE", "K_DATABASES", 
-                      "K_DEFAULT", "K_DELETE", "K_DESC", "K_DISTINCT", "K_DROP", 
-                      "K_EXCEPT", "K_EXISTS", "K_FOR", "K_FOREIGN", "K_FROM", 
-                      "K_FULL", "K_GROUP", "K_HAVING", "K_IGNORE", "K_IN", 
-                      "K_INDEX", "K_INNER", "K_INSERT", "K_INTERSECT", "K_INTO", 
-                      "K_IS", "K_JOIN", "K_KEY", "K_LEFT", "K_LIKE", "K_LIMIT", 
-                      "K_MATCH", "K_NATURAL", "K_NO", "K_NOT", "K_NULL", 
-                      "K_OF", "K_OFFSET", "K_ON", "K_OR", "K_ORDER", "K_PRIMARY", 
-                      "K_REFERENCES", "K_RENAME", "K_ROLLBACK", "K_SELECT", 
-                      "K_SET", "K_SHOW", "K_TABLE", "K_TABLES", "K_THEN", 
-                      "K_TO", "K_TRANSACTION", "K_UNION", "K_UNIQUE", "K_UPDATE", 
-                      "K_USE", "K_VALUES", "K_WHERE", "IDENTIFIER", "NUMERIC_LITERAL", 
-                      "STRING_LITERAL", "BLOB_LITERAL", "SINGLE_LINE_COMMENT", 
+    symbolicNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                      "K_ADD", "K_ALTER", "K_AND", "K_AS", "K_ASC", "K_BEGIN",
+                      "K_BY", "K_CHECK", "K_COLUMN", "K_COLUMNS", "K_COMMIT",
+                      "K_CONSTRAINT", "K_CREATE", "K_DATABASE", "K_DATABASES",
+                      "K_DEFAULT", "K_DELETE", "K_DESC", "K_DISTINCT", "K_DROP",
+                      "K_EXCEPT", "K_EXISTS", "K_FOR", "K_FOREIGN", "K_FROM",
+                      "K_FULL", "K_GROUP", "K_HAVING", "K_IGNORE", "K_IN",
+                      "K_INDEX", "K_INNER", "K_INSERT", "K_INTERSECT", "K_INTO",
+                      "K_IS", "K_JOIN", "K_KEY", "K_LEFT", "K_LIKE", "K_LIMIT",
+                      "K_MATCH", "K_NATURAL", "K_NO", "K_NOT", "K_NULL",
+                      "K_OF", "K_OFFSET", "K_ON", "K_OR", "K_ORDER", "K_PRIMARY",
+                      "K_REFERENCES", "K_RENAME", "K_ROLLBACK", "K_SELECT",
+                      "K_SET", "K_SHOW", "K_TABLE", "K_TABLES", "K_THEN",
+                      "K_TO", "K_TRANSACTION", "K_UNION", "K_UNIQUE", "K_UPDATE",
+                      "K_USE", "K_VALUES", "K_WHERE", "IDENTIFIER", "NUMERIC_LITERAL",
+                      "STRING_LITERAL", "BLOB_LITERAL", "SINGLE_LINE_COMMENT",
                       "MULTILINE_COMMENT", "SPACES", "UNEXPECTED_CHAR" ]
 
     RULE_parse = 0
@@ -522,23 +522,23 @@ class sqlParser ( Parser ):
     RULE_transaction_name = 62
     RULE_any_name = 63
 
-    ruleNames =  [ "parse", "error", "sql_stmt_list", "sql_stmt", "create_database_stmt", 
-                   "alter_database_stmt", "drop_database_stmt", "show_databases_stmt", 
-                   "show_tables_stmt", "use_database_stmt", "alter_table_stmt", 
-                   "show_columns_stmt", "begin_stmt", "commit_stmt", "factored_select_stmt", 
-                   "create_index_stmt", "create_table_stmt", "delete_stmt", 
-                   "drop_index_stmt", "drop_table_stmt", "insert_stmt", 
-                   "rollback_stmt", "simple_select_stmt", "update_stmt", 
-                   "column_def", "type_name", "column_constraint", "expr", 
-                   "foreign_key_clause", "table_constraint", "ordering_term", 
-                   "common_table_expression", "result_column", "table_or_subquery", 
-                   "join_clause", "join_operator", "join_constraint", "select_core", 
-                   "compound_operator", "cte_table_name", "signed_number", 
-                   "literal_value", "unary_operator", "error_message", "module_argument", 
-                   "column_alias", "keyword", "name", "function_name", "database_name", 
-                   "table_name", "table_or_index_name", "new_table_name", 
-                   "new_database_name", "column_name", "collation_name", 
-                   "foreign_table", "index_name", "trigger_name", "view_name", 
+    ruleNames =  [ "parse", "error", "sql_stmt_list", "sql_stmt", "create_database_stmt",
+                   "alter_database_stmt", "drop_database_stmt", "show_databases_stmt",
+                   "show_tables_stmt", "use_database_stmt", "alter_table_stmt",
+                   "show_columns_stmt", "begin_stmt", "commit_stmt", "factored_select_stmt",
+                   "create_index_stmt", "create_table_stmt", "delete_stmt",
+                   "drop_index_stmt", "drop_table_stmt", "insert_stmt",
+                   "rollback_stmt", "simple_select_stmt", "update_stmt",
+                   "column_def", "type_name", "column_constraint", "expr",
+                   "foreign_key_clause", "table_constraint", "ordering_term",
+                   "common_table_expression", "result_column", "table_or_subquery",
+                   "join_clause", "join_operator", "join_constraint", "select_core",
+                   "compound_operator", "cte_table_name", "signed_number",
+                   "literal_value", "unary_operator", "error_message", "module_argument",
+                   "column_alias", "keyword", "name", "function_name", "database_name",
+                   "table_name", "table_or_index_name", "new_table_name",
+                   "new_database_name", "column_name", "collation_name",
+                   "foreign_table", "index_name", "trigger_name", "view_name",
                    "module_name", "table_alias", "transaction_name", "any_name" ]
 
     EOF = Token.EOF
@@ -833,20 +833,20 @@ class sqlParser ( Parser ):
             _alt = self._interp.adaptivePredict(self._input,4,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
-                    self.state = 148 
+                    self.state = 148
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     while True:
                         self.state = 147
                         self.match(sqlParser.T__0)
-                        self.state = 150 
+                        self.state = 150
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
                         if not (_la==sqlParser.T__0):
                             break
 
                     self.state = 152
-                    self.sql_stmt() 
+                    self.sql_stmt()
                 self.state = 157
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,4,self._ctx)
@@ -857,7 +857,7 @@ class sqlParser ( Parser ):
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
                     self.state = 158
-                    self.match(sqlParser.T__0) 
+                    self.match(sqlParser.T__0)
                 self.state = 163
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,5,self._ctx)
@@ -2086,7 +2086,7 @@ class sqlParser ( Parser ):
                     self.state = 299
                     self.match(sqlParser.T__1)
                     self.state = 300
-                    self.column_def() 
+                    self.column_def()
                 self.state = 305
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,18,self._ctx)
@@ -2806,7 +2806,7 @@ class sqlParser ( Parser ):
         self.enterRule(localctx, 50, self.RULE_type_name)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 410 
+            self.state = 410
             self._errHandler.sync(self)
             _alt = 1
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -2816,7 +2816,7 @@ class sqlParser ( Parser ):
 
                 else:
                     raise NoViableAltException(self)
-                self.state = 412 
+                self.state = 412
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,31,self._ctx)
 
@@ -2942,7 +2942,7 @@ class sqlParser ( Parser ):
         def getRuleIndex(self):
             return sqlParser.RULE_expr
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
@@ -3873,7 +3873,7 @@ class sqlParser ( Parser ):
 
                         pass
 
-             
+
                 self.state = 551
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,49,self._ctx)
@@ -4298,7 +4298,7 @@ class sqlParser ( Parser ):
         def getRuleIndex(self):
             return sqlParser.RULE_result_column
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
@@ -6550,44 +6550,39 @@ class sqlParser ( Parser ):
     def expr_sempred(self, localctx:ExprContext, predIndex:int):
             if predIndex == 0:
                 return self.precpred(self._ctx, 14)
-         
+
 
             if predIndex == 1:
                 return self.precpred(self._ctx, 13)
-         
+
 
             if predIndex == 2:
                 return self.precpred(self._ctx, 12)
-         
+
 
             if predIndex == 3:
                 return self.precpred(self._ctx, 11)
-         
+
 
             if predIndex == 4:
                 return self.precpred(self._ctx, 10)
-         
+
 
             if predIndex == 5:
                 return self.precpred(self._ctx, 9)
-         
+
 
             if predIndex == 6:
                 return self.precpred(self._ctx, 5)
-         
+
 
             if predIndex == 7:
                 return self.precpred(self._ctx, 3)
-         
+
 
             if predIndex == 8:
                 return self.precpred(self._ctx, 4)
-         
+
 
             if predIndex == 9:
                 return self.precpred(self._ctx, 2)
-         
-
-
-
-
