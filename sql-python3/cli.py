@@ -12,7 +12,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = 'databases/'
+userpath = '/databases/'
 db = ""
 
 tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
@@ -154,7 +154,7 @@ class GeneralListener(sqlListener):
         global db
         if db != "":
             tableName = ctx.table_name().getText()
-            print (ctx.K_VALUES()[0])
+            print (ctx.expr()[0].getText())
         else:
             print("No hay ninguna base de datos seleccionada")
 
