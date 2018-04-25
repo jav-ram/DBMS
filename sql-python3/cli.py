@@ -17,7 +17,7 @@ db = ""
 
 class GeneralListener(sqlListener):
 
-        #Operaciones con BASES DE DATOS
+        #Operaciones con BASES DE DATOS   ----------------------------------------------------------------------------------------------
 
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
         # os.mkdir(ctx.database_name().getText())
@@ -64,7 +64,7 @@ class GeneralListener(sqlListener):
             print("No se elimino ninguna base de datos")
 
 
-            #Operaciones con TABLAS
+            #Operaciones con TABLAS------------------------------------------------------------------------------------------------------
 
     # Exit a parse tree produced by sqlParser#create_table_stmt.
     def exitCreate_table_stmt(self, ctx:sqlParser.Create_table_stmtContext):
@@ -109,6 +109,29 @@ class GeneralListener(sqlListener):
             else:
                 print("No existe la tabla que se quiere renombrar")
 
+        else:
+            print("No hay ninguna base de datos seleccionada")
+
+    def exitDrop_table_stmt(self, ctx:sqlParser.Drop_table_stmtContext):
+        global db
+        if db != "":
+            print("¿Esta seguro de que quiere eliminar la tabla: " +ctx.table_name().getText() + " de la base de datos " + db)
+            print("Y/N para proceder")
+            respuesta = input()
+            if (respuesta == "Y" or respuesta == "y"):
+                print("Se elimino tabla: " + ctx.table_name().getText())
+                shutil.rmtree(userpath + "/" + db + "/" + ctx.table_name().getText(), ignore_errors=True)
+            else:
+                print("No se elimino ninguna tabla")
+        else:
+            print("No hay ninguna base de datos seleccionada")
+
+    def exitShow_tables_stmt(self, ctx:sqlParser.Show_tables_stmtContext):
+        global db
+        if db != "":
+            tmppath = userpath + db
+            print("Las tablas de la base de datos: " + db + " son: ")
+            print([x[0].replace(tmppath, "") for x in extra.walklevel(tmppath, 1)])
         else:
             print("No hay ninguna base de datos seleccionada")
 
