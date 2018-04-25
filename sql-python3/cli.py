@@ -2,6 +2,8 @@ import sys
 import os
 #para crear bases de datos  estoy usando pathlib ya no os
 import pathlib
+#para cualquier definicion de funcion que usemos
+import extra
 import shutil
 from antlr4 import *
 from sqlLexer import sqlLexer
@@ -10,10 +12,13 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = 'databases/'
+userpath = '/databases/'
 db = ""
 
 class GeneralListener(sqlListener):
+
+        #Operaciones con BASES DE DATOS
+
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
         # os.mkdir(ctx.database_name().getText())
         pathlib.Path(userpath + ctx.database_name().getText()).mkdir(parents=True, exist_ok=True)
@@ -34,7 +39,9 @@ class GeneralListener(sqlListener):
 
     def exitShow_databases_stmt(self, ctx:sqlParser.Show_databases_stmtContext):
         # os.walk(userpath)
-        print([x[0].replace(userpath, "") for x in os.walk(userpath)])
+        # print([x[0].replace(userpath, "") for x in os.walk(userpath)])
+        temuserpath = userpath[:-1]
+        print([x[0].replace(temuserpath, "") for x in extra.walklevel(temuserpath, 1)])
 
     # Exit a parse tree produced by sqlParser#use_database_stmt.
     def exitUse_database_stmt(self, ctx:sqlParser.Use_database_stmtContext):
@@ -45,6 +52,19 @@ class GeneralListener(sqlListener):
             print("Ahora esta usando la base de datos " + db)
         else:
             print("No existe la base de datos!")
+
+    def exitDrop_database_stmt(self, ctx:sqlParser.Drop_database_stmtContext):
+        print("¿Esta seguro de que quiere eliminar la base de datos: " +ctx.database_name().getText() + "  con N Registros?")
+        print("Y/N para proceder")
+        respuesta = input()
+        if (respuesta == "Y" or respuesta == "y"):
+            print("Se elimino la base de datos: " + ctx.database_name().getText())
+            shutil.rmtree(userpath + ctx.database_name().getText(), ignore_errors=True)
+        else:
+            print("No se elimino ninguna base de datos")
+
+
+            #Operaciones con TABLAS
 
     # Exit a parse tree produced by sqlParser#create_table_stmt.
     def exitCreate_table_stmt(self, ctx:sqlParser.Create_table_stmtContext):
@@ -77,16 +97,6 @@ class GeneralListener(sqlListener):
         else:
             print("No hay ninguna base de datos seleccionada")
 
-    def exitDrop_database_stmt(self, ctx:sqlParser.Drop_database_stmtContext):
-        print("¿Esta seguro de que quiere eliminar la base de datos: " +ctx.database_name().getText() + "  con N Registros?")
-        print("Y/N para proceder")
-        respuesta = input()
-        if (respuesta == "Y" or respuesta == "y"):
-            print("Se elimino la base de datos: " + ctx.database_name().getText())
-            shutil.rmtree(userpath + ctx.database_name().getText(), ignore_errors=True)
-        else:
-            print("No se elimino ninguna base de datos")
-
     def exitAlter_table_stmt(self, ctx:sqlParser.Alter_table_stmtContext):
         global db
         if db != "":
@@ -101,6 +111,7 @@ class GeneralListener(sqlListener):
 
         else:
             print("No hay ninguna base de datos seleccionada")
+
 
 class ParserException(Exception):
     def __init__(self, value):
