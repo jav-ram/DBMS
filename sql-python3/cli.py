@@ -1,5 +1,7 @@
 import sys
 import os
+import json
+import ast
 #para crear bases de datos  estoy usando pathlib ya no os
 import pathlib
 #para cualquier definicion de funcion que usemos
@@ -12,7 +14,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = '/databases/'
+userpath = 'databases/'
 db = ""
 
 tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
@@ -154,7 +156,23 @@ class GeneralListener(sqlListener):
         global db
         if db != "":
             tableName = ctx.table_name().getText()
-            print (ctx.expr()[0].getText())
+            direccion = userpath + "/" + db +"/"+ tableName
+            tableColumns = ctx.column_name()
+            tableValues = ctx.expr()
+
+            schema = open(direccion + "/schema.json", "r")
+            text = schema.read()
+            schemaColumns = ast.literal_eval(text)['data']
+            if len(tableColumns) == len(tableValues) and len(tableValues) == len(schemaColumns):
+                #tienen la misma cantidad de valores
+                print ("todo chill!")
+                #abrir archivo data
+
+                #recorrer todos los valor y guardarlos en el archivo
+            else:
+                #no tienen la misma cantidad de valores
+                print ("no se pudo")
+
         else:
             print("No hay ninguna base de datos seleccionada")
 

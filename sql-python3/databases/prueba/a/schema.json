@@ -1,1 +1,1 @@
-{'data': [{'type': 'INT', 'nombre': 'a', 'registros': '0', 'key': ''}, {'type': 'FLOAT', 'nombre': 'b', 'registros': '0', 'key': ''}, {'type': 'CHAR', 'nombre': 'c', 'registros': '0', 'key': ''}, {'type': 'DATE', 'nombre': 'd', 'registros': '0', 'key': ''}]}
+{'data': [{'type': 'INT', 'nombre': 'a', 'key': ''}, {'type': 'FLOAT', 'nombre': 'b', 'key': ''}, {'type': 'CHAR', 'nombre': 'c', 'key': ''}, {'type': 'DATE', 'nombre': 'd', 'key': ''}], 'registros': '0'}
