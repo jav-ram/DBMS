@@ -12,8 +12,10 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = '/databases/'
+userpath = 'databases/'
 db = ""
+
+tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
 
 class GeneralListener(sqlListener):
 
@@ -76,6 +78,9 @@ class GeneralListener(sqlListener):
             if existe:
                 print("Ya existe esta tabla")
             else:
+                #todo bien o mal
+                error = True
+                contador = 0
                 #crear folder
                 pathlib.Path(userpath + "/" + db +"/"+ tableName).mkdir(parents=True, exist_ok=True)
                 #crear archivos
@@ -89,10 +94,19 @@ class GeneralListener(sqlListener):
                     schemaColumn = {}
                     schemaColumn['nombre'] = column.column_name().getText()
                     schemaColumn['type'] = column.type_name().getText()
-                    schemaColumn['key'] = ''                                    #No se como sacar la key
+                    if schemaColumn['type'] in tiposDatos:
+                        print ("si existe tipo de dato")
+                    else:
+                        contador = contador + 1
+                    schemaColumn['key'] = ''                   #No se como sacar la key
                     data.append(schemaColumn)
-                schemaData["data"] = data
-                schema.write(str(schemaData))
+                if contador > 0:
+                    print ("borrando la tabla")
+                    shutil.rmtree(direccion, ignore_errors=True)
+                else:
+                    schemaData['registros'] = '0'
+                    schemaData["data"] = data
+                    schema.write(str(schemaData))
 
         else:
             print("No hay ninguna base de datos seleccionada")
