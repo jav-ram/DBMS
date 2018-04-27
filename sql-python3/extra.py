@@ -1,4 +1,5 @@
 import os
+import re
 
 def walklevel(some_dir, level=1):
     some_dir = some_dir.rstrip(os.path.sep)
@@ -9,3 +10,25 @@ def walklevel(some_dir, level=1):
         num_sep_this = root.count(os.path.sep)
         if num_sep + level <= num_sep_this:
             del dirs[:]
+
+
+def any_to_int (s):
+    s = re.sub('[^0-9]', '', s)
+    return s
+
+
+def type_anything(texto_raw):
+    try:
+        #parseo a entero
+        a = int(texto_raw)
+        return a
+    except:
+        try:
+            #parseo a FLOAT
+            b = float(texto_raw)
+            return b
+        except:
+            #regreso del mismo texto en caso de que no encuentre nada
+            return texto_raw
+    else:
+        return None
