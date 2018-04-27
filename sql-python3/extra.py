@@ -22,12 +22,12 @@ def type_anything(texto_raw):
     try:
         #parseo a entero
         a = int(texto_raw)
-        return a
+        return "INT"
     except:
         try:
             #parseo a FLOAT
             b = float(texto_raw)
-            return b
+            return "FLOAT"
         except:
             #regreso del mismo texto en caso de que no encuentre nada
             #return texto_raw
@@ -45,8 +45,3 @@ def type_anything(texto_raw):
 def try_date():
     print(datetime.date(year=2000, month=2, day=30))
     return 0
-
-stringfecha = "2000-5-5"
-s = re.sub('-', '', stringfecha)
-print(datetime.datetime.strptime(s, '%Y%m%d').date())
-#try_date()
