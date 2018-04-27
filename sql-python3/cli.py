@@ -92,6 +92,9 @@ class GeneralListener(sqlListener):
                 #llenar schema
                 schemaData = {}
                 data = []
+                #ctx.table_constraint()[0].column_name()[0].getText() + "" +
+                key = ctx.table_constraint()[0].K_PRIMARY()
+                print(type(key))
                 for column in ctx.column_def():
                     schemaColumn = {}
                     schemaColumn['nombre'] = column.column_name().getText()
@@ -102,6 +105,12 @@ class GeneralListener(sqlListener):
                         contador = contador + 1
                     schemaColumn['key'] = ''                   #No se como sacar la key
                     data.append(schemaColumn)
+
+                if ctx.table_constraint()[0].K_PRIMARY() != None:
+                    print ("SSIIII")
+                else:
+                    print("noo")
+
                 if contador > 0:
                     print ("borrando la tabla")
                     shutil.rmtree(direccion, ignore_errors=True)
