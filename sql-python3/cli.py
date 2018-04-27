@@ -166,6 +166,14 @@ class GeneralListener(sqlListener):
             if len(tableColumns) == len(tableValues) and len(tableValues) == len(schemaColumns):
                 #tienen la misma cantidad de valores
                 print ("todo chill!")
+                dato = ""
+                for data in tableValues:
+                    dato = dato + data.getText() + "|"
+                dato = dato[:-1]
+                #escribir data a data.txt
+                dataFile = open(direccion + "/data.txt", "a")
+                dataFile.write(dato + '\n')
+                dataFile.close()
                 #abrir archivo data
 
                 #recorrer todos los valor y guardarlos en el archivo

@@ -1,1 +1,1 @@
-{'data': [{'type': 'INT', 'nombre': 'a', 'key': ''}, {'type': 'FLOAT', 'nombre': 'b', 'key': ''}, {'type': 'CHAR', 'nombre': 'c', 'key': ''}, {'type': 'DATE', 'nombre': 'd', 'key': ''}], 'registros': '0'}
+{'data': [{'key': '', 'type': 'INT', 'nombre': 'a'}, {'key': '', 'type': 'FLOAT', 'nombre': 'b'}], 'registros': '0'}
