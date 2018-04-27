@@ -107,6 +107,51 @@ class sqlListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by sqlParser#alterRenameTo.
+    def enterAlterRenameTo(self, ctx:sqlParser.AlterRenameToContext):
+        pass
+
+    # Exit a parse tree produced by sqlParser#alterRenameTo.
+    def exitAlterRenameTo(self, ctx:sqlParser.AlterRenameToContext):
+        pass
+
+
+    # Enter a parse tree produced by sqlParser#alterAddColumn.
+    def enterAlterAddColumn(self, ctx:sqlParser.AlterAddColumnContext):
+        pass
+
+    # Exit a parse tree produced by sqlParser#alterAddColumn.
+    def exitAlterAddColumn(self, ctx:sqlParser.AlterAddColumnContext):
+        pass
+
+
+    # Enter a parse tree produced by sqlParser#alterAddConstraint.
+    def enterAlterAddConstraint(self, ctx:sqlParser.AlterAddConstraintContext):
+        pass
+
+    # Exit a parse tree produced by sqlParser#alterAddConstraint.
+    def exitAlterAddConstraint(self, ctx:sqlParser.AlterAddConstraintContext):
+        pass
+
+
+    # Enter a parse tree produced by sqlParser#alterDropColumn.
+    def enterAlterDropColumn(self, ctx:sqlParser.AlterDropColumnContext):
+        pass
+
+    # Exit a parse tree produced by sqlParser#alterDropColumn.
+    def exitAlterDropColumn(self, ctx:sqlParser.AlterDropColumnContext):
+        pass
+
+
+    # Enter a parse tree produced by sqlParser#alterDropConstraint.
+    def enterAlterDropConstraint(self, ctx:sqlParser.AlterDropConstraintContext):
+        pass
+
+    # Exit a parse tree produced by sqlParser#alterDropConstraint.
+    def exitAlterDropConstraint(self, ctx:sqlParser.AlterDropConstraintContext):
+        pass
+
+
     # Enter a parse tree produced by sqlParser#show_columns_stmt.
     def enterShow_columns_stmt(self, ctx:sqlParser.Show_columns_stmtContext):
         pass
@@ -744,3 +789,5 @@ class sqlListener(ParseTreeListener):
     # Exit a parse tree produced by sqlParser#any_name.
     def exitAny_name(self, ctx:sqlParser.Any_nameContext):
         pass
+
+
