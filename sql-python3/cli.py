@@ -162,19 +162,31 @@ class GeneralListener(sqlListener):
 
             schema = open(direccion + "/schema.json", "r")
             text = schema.read()
+            schema.close()
+            json = ast.literal_eval(text)
             schemaColumns = ast.literal_eval(text)['data']
             if len(tableColumns) == len(tableValues) and len(tableValues) == len(schemaColumns):
                 #tienen la misma cantidad de valores
                 print ("todo chill!")
                 dato = ""
+                c = 0
                 for data in tableValues:
+                    if extra.type_anything(data.getText()) != schemaColumns[c]['type']:
+                        print("no son del mismo tipo")
+                        return 1
                     dato = dato + data.getText() + "|"
+                    c = c + 1
                 dato = dato[:-1]
                 #escribir data a data.txt
                 dataFile = open(direccion + "/data.txt", "a")
                 dataFile.write(dato + '\n')
                 dataFile.close()
-                #abrir archivo data
+                #cambiar registro en json
+                json['registros'] = ''+ str(int(json['registros']) + 1) + ''
+                schemaJSON = open(direccion + "/schema.json", "w")
+                schemaJSON.write(str(json))
+                schemaJSON.close()
+
 
                 #recorrer todos los valor y guardarlos en el archivo
             else:

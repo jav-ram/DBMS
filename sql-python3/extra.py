@@ -21,14 +21,14 @@ def type_anything(texto_raw):
     try:
         #parseo a entero
         a = int(texto_raw)
-        return a
+        return "INT"
     except:
         try:
             #parseo a FLOAT
             b = float(texto_raw)
-            return b
+            return "FLOAT"
         except:
             #regreso del mismo texto en caso de que no encuentre nada
-            return texto_raw
+            return "CHAR"
     else:
         return None
