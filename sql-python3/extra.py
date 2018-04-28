@@ -37,7 +37,7 @@ def type_anything(texto_raw):
                 return "DATE"
                 #tipo de variable datetime.date
             except:
-                return texto_raw
+                return "CHAR"
     else:
         return None
 

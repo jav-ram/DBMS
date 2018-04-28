@@ -14,7 +14,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = 'databases/'
+userpath = '/databases/'
 db = ""
 
 tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
@@ -94,25 +94,25 @@ class GeneralListener(sqlListener):
                 data = []
                 #ctx.table_constraint()[0].column_name()[0].getText() + "" +
                 key = ctx.table_constraint()[0].K_PRIMARY()
-                print(type(key))
+                #print(type(key))
                 for column in ctx.column_def():
                     schemaColumn = {}
                     schemaColumn['nombre'] = column.column_name().getText()
                     schemaColumn['type'] = column.type_name().getText()
                     if schemaColumn['type'] in tiposDatos:
-                        print ("si existe tipo de dato")
+                        print ("El tipo de dato ingresado es valido")
                     else:
                         contador = contador + 1
                     schemaColumn['key'] = ''                   #No se como sacar la key
                     data.append(schemaColumn)
 
                 if ctx.table_constraint()[0].K_PRIMARY() != None:
-                    print ("SSIIII")
+                    print ("Se encuentra un Constraint")
                 else:
-                    print("noo")
+                    print("No ingreso ningun Constraint")
 
                 if contador > 0:
-                    print ("borrando la tabla")
+                    print ("Borrando la tabla")
                     shutil.rmtree(direccion, ignore_errors=True)
                 else:
                     schemaData['registros'] = '0'
@@ -176,12 +176,12 @@ class GeneralListener(sqlListener):
             schemaColumns = ast.literal_eval(text)['data']
             if len(tableColumns) == len(tableValues) and len(tableValues) == len(schemaColumns):
                 #tienen la misma cantidad de valores
-                print ("todo chill!")
+                print ("La cantidad de valores ingresados coincide con el numero de tuplas de la tabla")
                 dato = ""
                 c = 0
                 for data in tableValues:
                     if extra.type_anything(data.getText()) != schemaColumns[c]['type']:
-                        print("no son del mismo tipo")
+                        print("El tipo esperado: " + schemaColumns[c]['type'] + ", se encontro: " + extra.type_anything(data.getText()))
                         return 1
                     dato = dato + data.getText() + "|"
                     c = c + 1
@@ -200,7 +200,7 @@ class GeneralListener(sqlListener):
                 #recorrer todos los valor y guardarlos en el archivo
             else:
                 #no tienen la misma cantidad de valores
-                print ("no se pudo")
+                print ("La cantidad de valores ingresados NO coincide con el numero de tuplas de la tabla")
 
         else:
             print("No hay ninguna base de datos seleccionada")
