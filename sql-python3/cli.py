@@ -14,7 +14,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = '/databases/'
+userpath = 'databases/'
 db = ""
 
 tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
@@ -93,7 +93,6 @@ class GeneralListener(sqlListener):
                 schemaData = {}
                 data = []
                 #ctx.table_constraint()[0].column_name()[0].getText() + "" +
-                key = ctx.table_constraint()[0].K_PRIMARY()
                 #print(type(key))
                 for column in ctx.column_def():
                     schemaColumn = {}
@@ -106,10 +105,17 @@ class GeneralListener(sqlListener):
                     schemaColumn['key'] = ''                   #No se como sacar la key
                     data.append(schemaColumn)
 
-                if ctx.table_constraint()[0].K_PRIMARY() != None:
-                    print ("Se encuentra un Constraint")
-                else:
-                    print("No ingreso ningun Constraint")
+                for constraint in ctx.table_constraint():
+                    for d in data:
+                        if d['nombre'] == constraint.column_name()[0].getText():
+                            if constraint.K_PRIMARY() != None:
+                                print('constraint es primary')
+                                d['key'] = 'primary'
+                            elif constraint.K_FOREIGN() != None:
+                                print('constraint es foreign')
+                                d['key'] = 'foreign'
+                            else:
+                                d['key'] = ''
 
                 if contador > 0:
                     print ("Borrando la tabla")
