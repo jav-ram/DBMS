@@ -73,6 +73,8 @@ class GeneralListener(sqlListener):
     # Exit a parse tree produced by sqlParser#create_table_stmt.
     def exitCreate_table_stmt(self, ctx:sqlParser.Create_table_stmtContext):
         global db
+        contador = 0
+
         if db != "":
             tableName = ctx.table_name().getText()
             #Buscar si ya existe
@@ -82,7 +84,7 @@ class GeneralListener(sqlListener):
             else:
                 #todo bien o mal
                 error = True
-                contador = 0
+
                 #crear folder
                 pathlib.Path(userpath + "/" + db +"/"+ tableName).mkdir(parents=True, exist_ok=True)
                 #crear archivos
@@ -116,8 +118,30 @@ class GeneralListener(sqlListener):
                                 referencia = {}
                                 referencia['tabla'] = constraint.foreign_key_clause().foreign_table().getText()
                                 referencia['columna'] = constraint.foreign_key_clause().column_name()[0].getText()
-                                d['key'] = 'foreign'
-                                d['referencia'] = referencia
+                                #checkear si existe tabla y columna referenciada
+                                print('Checkeando referencia')
+                                tableRef = userpath + '/' + db + '/' + referencia['tabla']
+                                if pathlib.Path(tableRef).exists():
+                                    print('Si existe tabla')
+                                    #checkear la existencia de la columna
+                                    jsonRef = open(tableRef + '/schema.json', 'r')
+                                    refRead = jsonRef.read()
+                                    json = ast.literal_eval(refRead)
+                                    its_in = 0
+                                    for dato in json['data']:
+                                        if dato['nombre'] == referencia['columna']:
+                                            its_in = its_in + 1
+                                    if its_in > 0:
+                                        print('existe columna referenciada')
+                                        d['key'] = 'foreign'
+                                        d['referencia'] = referencia
+                                        print(d)
+                                        print(data)
+                                    else:
+                                        print('no existe columna')
+                                        contador = contador + 1
+                                else:
+                                    contador = contador + 1
                             else:
                                 d['key'] = ''
 
@@ -256,7 +280,7 @@ def main(argv):
             if (text == 'exit'):
                 sys.exit()
 
-            parse(text);
+            parse(text)
             print("Valid")
 
         except ParserException as e:
