@@ -1,0 +1,1 @@
+{'data': [{'type': 'INT', 'key': 'primary', 'nombre': 'id'}, {'type': 'CHAR', 'referencia': {'tabla': 'PERSONAs', 'columna': 'id'}, 'key': 'foreign', 'nombre': 'nombre'}], 'registros': '0'}

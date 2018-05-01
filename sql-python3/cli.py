@@ -113,7 +113,11 @@ class GeneralListener(sqlListener):
                                 d['key'] = 'primary'
                             elif constraint.K_FOREIGN() != None:
                                 print('constraint es foreign')
+                                referencia = {}
+                                referencia['tabla'] = constraint.foreign_key_clause().foreign_table().getText()
+                                referencia['columna'] = constraint.foreign_key_clause().column_name()[0].getText()
                                 d['key'] = 'foreign'
+                                d['referencia'] = referencia
                             else:
                                 d['key'] = ''
 
