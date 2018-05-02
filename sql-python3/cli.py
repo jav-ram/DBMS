@@ -14,7 +14,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = 'databases/'
+userpath = '/databases/'
 db = ""
 
 tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
@@ -219,7 +219,10 @@ class GeneralListener(sqlListener):
                         return 1
                     dato = dato + data.getText() + "|"
                     c = c + 1
-                dato = dato[:-1]
+
+                #SPAGHET DEL FUTURO PARA EL ULTIMO |
+
+                #dato = dato[:-1]
                 #escribir data a data.txt
                 dataFile = open(direccion + "/data.txt", "a")
                 dataFile.write(dato + '\n')
@@ -238,6 +241,85 @@ class GeneralListener(sqlListener):
 
         else:
             print("No hay ninguna base de datos seleccionada")
+
+#Update table con condiciones
+    def exitUpdate_stmt(self, ctx:sqlParser.Update_stmtContext):
+        global db
+        if db != "":
+            tableName = ctx.table_name().getText()
+            direccion = userpath + "/" + db +"/"+ tableName
+            tableColumn = ctx.column_name()[0].getText()
+            tableValue = ctx.expr()[0].getText()
+            schema = open(direccion + "/schema.json", "r")
+            text = schema.read()
+            json = ast.literal_eval(text)
+            num_columns = len(json['data'])
+            num_rows = json['registros']
+            schema.close()
+
+
+            '''
+            print("table_name: " + tableName)
+            print("column_name: " + tableColumn)
+            print("table_value: " + tableValue)
+            print("condition_raw: " + conditionRaw)
+            '''
+
+            dataFile = open(direccion + "/data.txt", "r")
+            datatext = str(dataFile.read())
+            dataFile.close()
+
+            print(str(num_columns) + "Help" + str(num_rows))
+            dataarray = datatext.split("\n")
+            print(dataarray)
+            estructura = [[0 for x in range(int(num_columns))] for y in range(int(num_rows))]
+            #estructura = [int(num_columns)][int(num_rows)]
+            for y in range(0,len(dataarray)):
+                print(y)
+                columns = dataarray[y].split('|')
+                for x in range(0,len(columns)-1):
+                    estructura[y][x]= str(columns[x])
+
+            #testear a ver si esta guardando toda la estructura
+            print(estructura)
+
+            '''
+            for dato in dataarray:
+                dato.replace('\n', "")
+            '''
+
+            try:
+                #parse condition_raw
+                conditionRaw = ctx.expr()[1].getText()
+                newcondition = conditionRaw.replace(tableColumn, "")
+                condicional = newcondition[:1]
+                valor_condicional = newcondition[1:]
+
+                if (condicional == "="):
+
+
+                    print("Es signo =")
+                if (condicional == ">"):
+
+
+                    print("Es singo >")
+                if (condicional == "<"):
+
+
+                    print("Es signo <")
+                else:
+
+
+                    print("valio 20")
+
+
+            except:
+                print("No tiene condicional")
+
+
+
+        else:
+            print("Ninguna base de datos seleccionada")
 
 class ParserException(Exception):
     def __init__(self, value):
