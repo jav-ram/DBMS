@@ -257,66 +257,30 @@ class GeneralListener(sqlListener):
             num_rows = json['registros']
             schema.close()
             jsonColumn = json['data']
+            numerocolumna = 0
 
-            #print (tableColumn)
+            #Obtener el numero de columnas en la base de datos
             for i in range (0, len(jsonColumn)):
                 #print(jsonColumn[i]['nombre'])
                 if (tableColumn == jsonColumn[i]['nombre']):
                     numerocolumna = i
 
-            #print(numerocolumna)
 
-            '''
-            print("table_name: " + tableName)
-            print("column_name: " + tableColumn)
-            print("table_value: " + tableValue)
-            print("condition_raw: " + conditionRaw)
-            '''
-
+            #Obtener los datos de la base de datos
             dataFile = open(direccion + "/data.txt", "r")
             datatext = str(dataFile.read())
             dataFile.close()
 
-            #print(str(num_columns) + "Help" + str(num_rows))
+            #Separar los datos de la base de datos por enter (cada objeto ingresado a la DB)
             dataarray = datatext.split("\n")
-            #print(dataarray)
+            #Hacer un array bidimensional para cada atributo de la DB
             estructura = [[0 for x in range(int(num_columns))] for y in range(int(num_rows))]
-            #estructura = [int(num_columns)][int(num_rows)]
+            #Llenar el array bidimensional con los datos de la DB
             for y in range(0,len(dataarray)):
-                #print(y)
                 columns = dataarray[y].split('|')
                 for x in range(0,len(columns)-1):
                     estructura[y][x]= str(columns[x])
 
-            #testear a ver si esta guardando toda la estructura
-            #print(estructura[0][0])
-
-
-
-            for f in range(0, len(dataarray)-1):
-                #print(estructura[f][numerocolumna])
-                estructura[f][numerocolumna] = tableValue
-                print(estructura[f][numerocolumna])
-
-            nuevostr = ""
-            for k in range(0,int(num_rows)):
-                for t in range(0,int(num_columns)):
-                    nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
-                nuevostr = nuevostr + "\n"
-
-            print(estructura)
-            print(nuevostr)
-
-            #droppear la tabla
-            newFile = open(direccion + "/data.txt", "w")
-            #escribir en el archivo el nuevo string
-            newFile.write(nuevostr)
-            newFile.close()
-
-            '''
-            for dato in dataarray:
-                dato.replace('\n', "")
-            '''
 
 
             try:
@@ -327,30 +291,118 @@ class GeneralListener(sqlListener):
                 valor_condicional = newcondition[1:]
 
                 if (condicional == "="):
-
-
                     print("Es signo =")
+                    try:
+                        #Obtener los datos que cumplen con el nombre de la tupla ingresada
+                        for f in range(0, len(dataarray)-1):
+                            if (int(estructura[f][numerocolumna]) == int(valor_condicional)):
+                                estructura[f][numerocolumna] = tableValue
+
+                        #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
+                        nuevostr = ""
+                        #Lenar el string con los nuevos valores de el array bidimensional
+                        for k in range(0,int(num_rows)):
+                            for t in range(0,int(num_columns)):
+                                nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
+                            nuevostr = nuevostr + "\n"
+
+                        #Impresion del array Bidimensional
+                        print(estructura)
+                        #Impresion del string ingresado a la DB
+                        print(nuevostr)
+
+                        #droppear la tabla
+                        newFile = open(direccion + "/data.txt", "w")
+                        #escribir en el archivo el nuevo string
+                        newFile.write(nuevostr)
+                        newFile.close()
+                    except:
+                        print("Lastimosamente, no se encontro ese nombre de tupla en la base de datos")
                 if (condicional == ">"):
+                    print("Es signo >")
+                    try:
+                        #Obtener los datos que cumplen con el nombre de la tupla ingresada
+                        for f in range(0, len(dataarray)-1):
+                            if (int(estructura[f][numerocolumna]) > int(valor_condicional)):
+                                estructura[f][numerocolumna] = tableValue
 
+                        #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
+                        nuevostr = ""
+                        #Lenar el string con los nuevos valores de el array bidimensional
+                        for k in range(0,int(num_rows)):
+                            for t in range(0,int(num_columns)):
+                                nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
+                            nuevostr = nuevostr + "\n"
 
-                    print("Es singo >")
+                        #Impresion del array Bidimensional
+                        print(estructura)
+                        #Impresion del string ingresado a la DB
+                        print(nuevostr)
+
+                        #droppear la tabla
+                        newFile = open(direccion + "/data.txt", "w")
+                        #escribir en el archivo el nuevo string
+                        newFile.write(nuevostr)
+                        newFile.close()
+                    except:
+                        print("Lastimosamente, no se encontro ese nombre de tupla en la base de datos")
                 if (condicional == "<"):
-
-
                     print("Es signo <")
-                '''
-                else:
+                    try:
+                        #Obtener los datos que cumplen con el nombre de la tupla ingresada
+                        for f in range(0, len(dataarray)-1):
+                            if (int(estructura[f][numerocolumna]) < int(valor_condicional)):
+                                estructura[f][numerocolumna] = tableValue
 
-                    print("valio 20")
-                '''
+                        #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
+                        nuevostr = ""
+                        #Lenar el string con los nuevos valores de el array bidimensional
+                        for k in range(0,int(num_rows)):
+                            for t in range(0,int(num_columns)):
+                                nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
+                            nuevostr = nuevostr + "\n"
 
+                        #Impresion del array Bidimensional
+                        print(estructura)
+                        #Impresion del string ingresado a la DB
+                        print(nuevostr)
+
+                        #droppear la tabla
+                        newFile = open(direccion + "/data.txt", "w")
+                        #escribir en el archivo el nuevo string
+                        newFile.write(nuevostr)
+                        newFile.close()
+                    except:
+                        print("Lastimosamente, no se encontro ese nombre de tupla en la base de datos")
             except:
-                print("No tiene condicional")
+                print("No tiene condicional, Por lo tanto se opero en toda la columna")
+                #Obtener los datos que cumplen con el nombre de la tupla ingresada
+                for f in range(0, len(dataarray)-1):
+                    estructura[f][numerocolumna] = tableValue
+                    #print(estructura[f][numerocolumna])
 
+                #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
+                nuevostr = ""
+                #Lenar el string con los nuevos valores de el array bidimensional
+                for k in range(0,int(num_rows)):
+                    for t in range(0,int(num_columns)):
+                        nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
+                    nuevostr = nuevostr + "\n"
 
+                #Impresion del array Bidimensional
+                print(estructura)
+                #Impresion del string ingresado a la DB
+                print(nuevostr)
+
+                #droppear la tabla
+                newFile = open(direccion + "/data.txt", "w")
+                #escribir en el archivo el nuevo string
+                newFile.write(nuevostr)
+                newFile.close()
 
         else:
             print("Ninguna base de datos seleccionada")
+
 
 class ParserException(Exception):
     def __init__(self, value):
