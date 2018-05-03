@@ -256,7 +256,15 @@ class GeneralListener(sqlListener):
             num_columns = len(json['data'])
             num_rows = json['registros']
             schema.close()
+            jsonColumn = json['data']
 
+            #print (tableColumn)
+            for i in range (0, len(jsonColumn)):
+                #print(jsonColumn[i]['nombre'])
+                if (tableColumn == jsonColumn[i]['nombre']):
+                    numerocolumna = i
+
+            #print(numerocolumna)
 
             '''
             print("table_name: " + tableName)
@@ -269,24 +277,47 @@ class GeneralListener(sqlListener):
             datatext = str(dataFile.read())
             dataFile.close()
 
-            print(str(num_columns) + "Help" + str(num_rows))
+            #print(str(num_columns) + "Help" + str(num_rows))
             dataarray = datatext.split("\n")
-            print(dataarray)
+            #print(dataarray)
             estructura = [[0 for x in range(int(num_columns))] for y in range(int(num_rows))]
             #estructura = [int(num_columns)][int(num_rows)]
             for y in range(0,len(dataarray)):
-                print(y)
+                #print(y)
                 columns = dataarray[y].split('|')
                 for x in range(0,len(columns)-1):
                     estructura[y][x]= str(columns[x])
 
             #testear a ver si esta guardando toda la estructura
+            #print(estructura[0][0])
+
+
+
+            for f in range(0, len(dataarray)-1):
+                #print(estructura[f][numerocolumna])
+                estructura[f][numerocolumna] = tableValue
+                print(estructura[f][numerocolumna])
+
+            nuevostr = ""
+            for k in range(0,int(num_rows)):
+                for t in range(0,int(num_columns)):
+                    nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
+                nuevostr = nuevostr + "\n"
+
             print(estructura)
+            print(nuevostr)
+
+            #droppear la tabla
+            newFile = open(direccion + "/data.txt", "w")
+            #escribir en el archivo el nuevo string
+            newFile.write(nuevostr)
+            newFile.close()
 
             '''
             for dato in dataarray:
                 dato.replace('\n', "")
             '''
+
 
             try:
                 #parse condition_raw
@@ -307,11 +338,11 @@ class GeneralListener(sqlListener):
 
 
                     print("Es signo <")
+                '''
                 else:
 
-
                     print("valio 20")
-
+                '''
 
             except:
                 print("No tiene condicional")
