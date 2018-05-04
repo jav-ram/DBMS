@@ -1,3 +1,10 @@
+##################################################################################################################################################
+# Universidad del Valle de Guatemala                                                                                                             #
+# Bases de Datos                                                                                                                                 #
+# Autores: Javier Ramos (16), José Rodolfo Pérez (16056), Andrea Cordon (16076)                                                                  #
+##################################################################################################################################################
+
+# Se importan todas las librerias a utilizar
 import sys
 import os
 import json
@@ -13,42 +20,54 @@ from sqlParser import sqlParser
 from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
-
+# Se define la direccion de donde se estaran manejando las Bases de Datos
 userpath = '/databases/'
 db = ""
 
+# Se definen los tipos de datos que seran permitidos en el DBMS
 tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
 
+# Se crea la clase general que contendra todos los metodos del DBMS
 class GeneralListener(sqlListener):
 
-        #Operaciones con BASES DE DATOS   ----------------------------------------------------------------------------------------------
+            ############################################################################################################################################################
+            #                                                                                                                                                          #
+            #                                                           Operaciones con BASES DE DATOS                                                                 #
+            #                                                                                                                                                          #
+            ############################################################################################################################################################
 
+    # CREATE TABLE
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
         #Crear un directorio para la base de datos
         pathlib.Path(userpath + ctx.database_name().getText()).mkdir(parents=True, exist_ok=True)
         print("Base de datos: " + ctx.database_name().getText() + " Creada!")
 
+    # ALTER DATABASE
     def exitAlter_database_stmt(self, ctx:sqlParser.Alter_database_stmtContext):
         #Nombre viejo de la base de datos que se desea renombrar
         old_name = pathlib.Path(userpath + ctx.database_name().getText())
         #verificacion de seguridad
+        # Se le pregunta al usuario si realmente quiere cambiar el nombre a la base de datos
         print("¿Esta seguro que quiere renombrar la base de datos: " + ctx.database_name().getText() + " por " + ctx.new_database_name().getText() + "?")
         print("Y/N para proceder")
         respuesta = input()
+        # Si la respuesta es si
         if (respuesta == "Y" or respuesta == "y"):
             print("El nombre de la base de datos: " + ctx.database_name().getText() + "ha cambiado a: " + ctx.new_database_name().getText())
             #renombrar la carpeta de la DB
             old_name.rename(userpath + ctx.new_database_name().getText())
+        # Si no se desea cambiar la base de datos
         else:
             print("No se cambio el nombre de la base de datos")
 
+    # SHOW DATABASES
     def exitShow_databases_stmt(self, ctx:sqlParser.Show_databases_stmtContext):
         #Eliminar la barra "/"
         temuserpath = userpath[:-1]
         #Caminar el directorio solamente el primer nivel donde se encuentran las carpetas de bases de datos
         print([x[0].replace(temuserpath, "") for x in extra.walklevel(temuserpath, 1)])
 
-
+    # USE DATABASE
     def exitUse_database_stmt(self, ctx:sqlParser.Use_database_stmtContext):
         global db
         #verificacion de que si existe la DB
@@ -60,6 +79,7 @@ class GeneralListener(sqlListener):
         else:
             print("No existe la base de datos!")
 
+    # DROP DATABASE
     def exitDrop_database_stmt(self, ctx:sqlParser.Drop_database_stmtContext):
         #verificacion de drop statement de toda la DB
         print("¿Esta seguro de que quiere eliminar la base de datos: " +ctx.database_name().getText() + "  con N Registros?")
@@ -72,9 +92,13 @@ class GeneralListener(sqlListener):
         else:
             print("No se elimino ninguna base de datos")
 
+    ############################################################################################################################################################
+    #                                                                                                                                                          #
+    #                                                                 Operaciones con TABLAS                                                                   #
+    #                                                                                                                                                          #
+    ############################################################################################################################################################
 
-            #Operaciones con TABLAS------------------------------------------------------------------------------------------------------
-
+    # CREATE TABLE
     def exitCreate_table_stmt(self, ctx:sqlParser.Create_table_stmtContext):
         global db
         contador = 0
@@ -126,7 +150,7 @@ class GeneralListener(sqlListener):
                                 tableRef = userpath + '/' + db + '/' + referencia['tabla']
                                 if pathlib.Path(tableRef).exists():
                                     print('Si existe tabla')
-                                    #checkear la existencia de la columna
+                                    #Revisa la existencia de la columna
                                     jsonRef = open(tableRef + '/schema.json', 'r')
                                     refRead = jsonRef.read()
                                     json = ast.literal_eval(refRead)
@@ -176,6 +200,7 @@ class GeneralListener(sqlListener):
         else:
             print("No hay ninguna base de datos seleccionada")
 
+    # DROP TABLE
     def exitDrop_table_stmt(self, ctx:sqlParser.Drop_table_stmtContext):
         global db
         #verificar si existe la DB
@@ -193,6 +218,7 @@ class GeneralListener(sqlListener):
         else:
             print("No hay ninguna base de datos seleccionada")
 
+    # SHOW TABLES
     def exitShow_tables_stmt(self, ctx:sqlParser.Show_tables_stmtContext):
         global db
         #verificar si existe la DB
@@ -205,6 +231,7 @@ class GeneralListener(sqlListener):
             print("No hay ninguna base de datos seleccionada")
 
     # Exit a parse tree produced by sqlParser#insert_stmt.
+    # INSERT INTO TABLE VALUES
     def exitInsert_stmt(self, ctx:sqlParser.Insert_stmtContext):
         global db
         #verificar si existe la DB
@@ -214,6 +241,7 @@ class GeneralListener(sqlListener):
             tableColumns = ctx.column_name()
             tableValues = ctx.expr()
 
+            # Se abre el archivo schema.json para su lectura
             schema = open(direccion + "/schema.json", "r")
             text = schema.read()
             schema.close()
@@ -250,6 +278,7 @@ class GeneralListener(sqlListener):
             print("No hay ninguna base de datos seleccionada")
 
 #Update table con condiciones
+    # UPDATE TABLE
     def exitUpdate_stmt(self, ctx:sqlParser.Update_stmtContext):
         global db
         if db != "":
@@ -408,8 +437,10 @@ class GeneralListener(sqlListener):
                 newFile.close()
 
         else:
+            # Si no se ha seleccionado ninguna base de datos
             print("Ninguna base de datos seleccionada")
 
+    # SELECT
     def exitSelect_core(self, ctx:sqlParser.Select_coreContext):
         #sacar las columnas que se quieren
         columnas = []
@@ -422,15 +453,19 @@ class GeneralListener(sqlListener):
         #verificar si existe columna y tabla
         #tabla
         existe = pathlib.Path(userpath + "/" + db +"/"+ tabla).exists()
+        # Si la tabla mencionada existe
         if existe:
             print("la tabla existe dentro de la base de datos " + db)
             #columna
+            # Se abre el documento schema.json para su lectura
             schemaFile = open(direccion + "/schema.json", "r")
+            # Se lee el documento
             schemaText = schemaFile.read()
             schemaJSON = ast.literal_eval(schemaText)
             schemaFile.close()
             schemaData = schemaJSON['data']
 
+            # Se guardan en variables el tamano de las filas y las columnas del schema.json
             num_rows = int(schemaJSON['registros'])
             num_columns = len(schemaData)
 
@@ -442,10 +477,12 @@ class GeneralListener(sqlListener):
             isIn = 0
             indices = {}
             todo = False
+            # Si lo que el usuario desea es hacer un SELECT de todo (*)
             if len(columnas) == 1 and columnas[0] == "*":
                 todo = True
                 for data in schemaColumnas:
                     indices[data] = schemaColumnas.index(data)
+            # Si el select contiene el nombre de las columnas que desea seleccionar
             else:
                 for datas in columnas:
                     if datas in schemaColumnas:
@@ -482,9 +519,10 @@ class GeneralListener(sqlListener):
                 #print(estructura)
                 print(resultado)
             else:
+                # Si lo que el usuario busca no esta dentro de la tabla
                 print("no estan dentro de la tabla ")
 
-
+        # En caso que la tabla seleccionada no exista dentro de la base de datos
         else:
             print("la tabla " + tabla + " no existe dentro de la base de datos " + db)
 
@@ -492,8 +530,11 @@ class GeneralListener(sqlListener):
     def exitDelete_stmt(self, ctx:sqlParser.Delete_stmtContext):
         global db
         if db != "":
+            # Se crea una variable que almacene el nombre de la tabla proporcionada por el usuario
             tableName = ctx.table_name().getText()
+            # Se establece la direccion donde esta guardada la tabla
             direccion = userpath + "/" + db +"/"+ tableName
+            # Se crea una variable para almacenar los valores de la tabla
             tableValue = ctx.expr().getText()
 
             #print("Table_name: " + tableName)
@@ -503,14 +544,17 @@ class GeneralListener(sqlListener):
             token = 0
             status = ""
 
+            # Si el token que se encuentra es =
             token = tableValue.find("=")
             if(token != -1):
                 valores_ingresados = tableValue.split("=")
                 status = "="
+            # Si el token que se encuentra es >
             token = tableValue.find(">")
             if(token != -1):
                 valores_ingresados = tableValue.split(">")
                 status = ">"
+            # Si el token que se encuentra es <
             token = tableValue.find("<")
             if(token != -1):
                 valores_ingresados = tableValue.split("<")
@@ -518,14 +562,17 @@ class GeneralListener(sqlListener):
 
             #print(valores_ingresados[0])
             #print(valores_ingresados[1])
+            # Si el status es =, entonces se reemplazara por ==
             if status == "=":
                 status = "=="
             #print(status)
 
-
+            # Se abre el archivo schema.json para su lectura
             schema = open(direccion + "/schema.json", "r")
+            # Se lee el archivo schema.json
             text = schema.read()
             json = ast.literal_eval(text)
+            # Se establecen el numero de columnas y filas del archivo y se guardan en distintas variables
             num_columns = len(json['data'])
             num_rows = json['registros']
             schema.close()
@@ -538,11 +585,14 @@ class GeneralListener(sqlListener):
             for column in jsonColumn:
                 schemaColumnas.append(column['nombre'])
 
+            # Se agregan valores a indices
             indices = {}
             if valores_ingresados[0] in schemaColumnas:
                 indices[valores_ingresados[0]] = schemaColumnas.index(valores_ingresados[0])
 
+            # Se abre el archivo data.txt para su lectura
             dataFile = open(direccion + "/data.txt", "r")
+            # Se lee el archivo
             datatext = str(dataFile.read())
             dataFile.close()
 
@@ -558,8 +608,10 @@ class GeneralListener(sqlListener):
 
             #resultado de select
             resultadoIndices = []
+            # Se imprime la estructura del archivo data.txt
             print(estructura)
 
+            # Se localizan las tuplas que se desean borrar
             for j in range(0, len(dataarray)):
                 columns = dataarray[j].split('|')
                 for i in range(0,len(columns)-1):
@@ -571,6 +623,7 @@ class GeneralListener(sqlListener):
             resultado = ""
             borrar = ""
             respuesta = dataarray[:]
+            # Se eliminan las tuplas desedas
             for j in range(len(dataarray) -1, -1, -1):
                 for i in resultadoIndices:
                     if i == j:
@@ -589,9 +642,10 @@ class GeneralListener(sqlListener):
             newFile.close()
 
             #Modificar el Schema para eliminar la columna tambien.
-
+        # En caso de no tener una base de datos seleccionada
         else:
             print("No hay base de datos seleccionada")
+
 
 class ParserException(Exception):
     def __init__(self, value):
