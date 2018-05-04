@@ -14,7 +14,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = 'databases/'
+userpath = '/databases/'
 db = ""
 
 tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
@@ -24,45 +24,50 @@ class GeneralListener(sqlListener):
         #Operaciones con BASES DE DATOS   ----------------------------------------------------------------------------------------------
 
     def exitCreate_database_stmt(self, ctx:sqlParser.Create_database_stmtContext):
-        # os.mkdir(ctx.database_name().getText())
+        #Crear un directorio para la base de datos
         pathlib.Path(userpath + ctx.database_name().getText()).mkdir(parents=True, exist_ok=True)
         print("Base de datos: " + ctx.database_name().getText() + " Creada!")
-        #   print("Hello world. At the input has been already validated")
 
     def exitAlter_database_stmt(self, ctx:sqlParser.Alter_database_stmtContext):
+        #Nombre viejo de la base de datos que se desea renombrar
         old_name = pathlib.Path(userpath + ctx.database_name().getText())
-
+        #verificacion de seguridad
         print("¿Esta seguro que quiere renombrar la base de datos: " + ctx.database_name().getText() + " por " + ctx.new_database_name().getText() + "?")
         print("Y/N para proceder")
         respuesta = input()
         if (respuesta == "Y" or respuesta == "y"):
             print("El nombre de la base de datos: " + ctx.database_name().getText() + "ha cambiado a: " + ctx.new_database_name().getText())
+            #renombrar la carpeta de la DB
             old_name.rename(userpath + ctx.new_database_name().getText())
         else:
             print("No se cambio el nombre de la base de datos")
 
     def exitShow_databases_stmt(self, ctx:sqlParser.Show_databases_stmtContext):
-        # os.walk(userpath)
-        # print([x[0].replace(userpath, "") for x in os.walk(userpath)])
+        #Eliminar la barra "/"
         temuserpath = userpath[:-1]
+        #Caminar el directorio solamente el primer nivel donde se encuentran las carpetas de bases de datos
         print([x[0].replace(temuserpath, "") for x in extra.walklevel(temuserpath, 1)])
 
-    # Exit a parse tree produced by sqlParser#use_database_stmt.
+
     def exitUse_database_stmt(self, ctx:sqlParser.Use_database_stmtContext):
         global db
+        #verificacion de que si existe la DB
         existe = pathlib.Path(userpath + ctx.database_name().getText()).exists()
         if existe:
+            #cambiar la global con la DB utilizada
             db = ctx.database_name().getText()
             print("Ahora esta usando la base de datos " + db)
         else:
             print("No existe la base de datos!")
 
     def exitDrop_database_stmt(self, ctx:sqlParser.Drop_database_stmtContext):
+        #verificacion de drop statement de toda la DB
         print("¿Esta seguro de que quiere eliminar la base de datos: " +ctx.database_name().getText() + "  con N Registros?")
         print("Y/N para proceder")
         respuesta = input()
         if (respuesta == "Y" or respuesta == "y"):
             print("Se elimino la base de datos: " + ctx.database_name().getText())
+            #Eliminar la carpeta y todas sus subcarpetas
             shutil.rmtree(userpath + ctx.database_name().getText(), ignore_errors=True)
         else:
             print("No se elimino ninguna base de datos")
@@ -70,7 +75,6 @@ class GeneralListener(sqlListener):
 
             #Operaciones con TABLAS------------------------------------------------------------------------------------------------------
 
-    # Exit a parse tree produced by sqlParser#create_table_stmt.
     def exitCreate_table_stmt(self, ctx:sqlParser.Create_table_stmtContext):
         global db
         contador = 0
@@ -94,8 +98,7 @@ class GeneralListener(sqlListener):
                 #llenar schema
                 schemaData = {}
                 data = []
-                #ctx.table_constraint()[0].column_name()[0].getText() + "" +
-                #print(type(key))
+
                 for column in ctx.column_def():
                     schemaColumn = {}
                     schemaColumn['nombre'] = column.column_name().getText()
@@ -104,7 +107,7 @@ class GeneralListener(sqlListener):
                         print ("El tipo de dato ingresado es valido")
                     else:
                         contador = contador + 1
-                    schemaColumn['key'] = ''                   #No se como sacar la key
+                    schemaColumn['key'] = ''
                     data.append(schemaColumn)
 
                 for constraint in ctx.table_constraint():
@@ -158,11 +161,13 @@ class GeneralListener(sqlListener):
 
     def exitAlter_table_stmt(self, ctx:sqlParser.Alter_table_stmtContext):
         global db
+        #verificar si existe la DB
         if db != "":
             tableName = ctx.table_name().getText()
             existe = pathlib.Path(userpath + "/" + db +"/"+ tableName).exists()
             if existe:
                 old_name = pathlib.Path(userpath + "/" + db + "/" + tableName)
+                #renombrar la tabla (archivos)
                 old_name.rename(userpath + "/" + db + "/"+ ctx.new_table_name().getText())
 
             else:
@@ -173,12 +178,15 @@ class GeneralListener(sqlListener):
 
     def exitDrop_table_stmt(self, ctx:sqlParser.Drop_table_stmtContext):
         global db
+        #verificar si existe la DB
         if db != "":
+            #verificar si se desea realmente eliminar la tabla
             print("¿Esta seguro de que quiere eliminar la tabla: " +ctx.table_name().getText() + " de la base de datos " + db)
             print("Y/N para proceder")
             respuesta = input()
             if (respuesta == "Y" or respuesta == "y"):
                 print("Se elimino tabla: " + ctx.table_name().getText())
+                #eliminar la tabla
                 shutil.rmtree(userpath + "/" + db + "/" + ctx.table_name().getText(), ignore_errors=True)
             else:
                 print("No se elimino ninguna tabla")
@@ -187,9 +195,11 @@ class GeneralListener(sqlListener):
 
     def exitShow_tables_stmt(self, ctx:sqlParser.Show_tables_stmtContext):
         global db
+        #verificar si existe la DB
         if db != "":
             tmppath = userpath + db
             print("Las tablas de la base de datos: " + db + " son: ")
+            #caminar el directorio de la base de datos para nombrar todas las tablas que se encuentran dentro
             print([x[0].replace(tmppath, "") for x in extra.walklevel(tmppath, 1)])
         else:
             print("No hay ninguna base de datos seleccionada")
@@ -197,6 +207,7 @@ class GeneralListener(sqlListener):
     # Exit a parse tree produced by sqlParser#insert_stmt.
     def exitInsert_stmt(self, ctx:sqlParser.Insert_stmtContext):
         global db
+        #verificar si existe la DB
         if db != "":
             tableName = ctx.table_name().getText()
             direccion = userpath + "/" + db +"/"+ tableName
@@ -220,9 +231,7 @@ class GeneralListener(sqlListener):
                     dato = dato + data.getText() + "|"
                     c = c + 1
 
-                #SPAGHET DEL FUTURO PARA EL ULTIMO |
-
-                #dato = dato[:-1]
+                #SPAGHET DEL FUTURO PARA EL ULTIMO | (sino da problemas el split by)
                 #escribir data a data.txt
                 dataFile = open(direccion + "/data.txt", "a")
                 dataFile.write(dato + '\n')
@@ -232,8 +241,6 @@ class GeneralListener(sqlListener):
                 schemaJSON = open(direccion + "/schema.json", "w")
                 schemaJSON.write(str(json))
                 schemaJSON.close()
-
-
                 #recorrer todos los valor y guardarlos en el archivo
             else:
                 #no tienen la misma cantidad de valores
@@ -489,8 +496,8 @@ class GeneralListener(sqlListener):
             direccion = userpath + "/" + db +"/"+ tableName
             tableValue = ctx.expr().getText()
 
-            print("Table_name: " + tableName)
-            print("Table_Value: " + tableValue)
+            #print("Table_name: " + tableName)
+            #print("Table_Value: " + tableValue)
 
             #parsear los valores para obtener el nombre de columna, el condicional y el valor
             token = 0
@@ -509,11 +516,11 @@ class GeneralListener(sqlListener):
                 valores_ingresados = tableValue.split("<")
                 status = "<"
 
-            print(valores_ingresados[0])
-            print(valores_ingresados[1])
+            #print(valores_ingresados[0])
+            #print(valores_ingresados[1])
             if status == "=":
                 status = "=="
-            print(status)
+            #print(status)
 
 
             schema = open(direccion + "/schema.json", "r")
@@ -557,10 +564,7 @@ class GeneralListener(sqlListener):
                 columns = dataarray[j].split('|')
                 for i in range(0,len(columns)-1):
                     for key, value in indices.items():
-                        #print(str(estructura[j][i]) + status + valores_ingresados[1])
-                        #print(eval(str(estructura[j][i]) + status + valores_ingresados[1]))
                         if value == i:
-                            #print(estructura[j][i])
                             if eval(str(estructura[j][i]) + status + valores_ingresados[1]):
                                 print(str(estructura[j][i]) + status + valores_ingresados[1])
                                 resultadoIndices.append(int(j))
@@ -576,45 +580,15 @@ class GeneralListener(sqlListener):
                         resultado = resultado + dataarray[j] + "\n"
 
             print("respuesta " + str(respuesta) )
-            try:
-                if (status == "="):
-                    print("Es signo =")
-                    try:
-                        #Obtener los datos que cumplen con el nombre de la tupla ingresada
-                        '''
-                        for f in range(0, len(dataarray)-1):
-                            if (int(estructura[f][numerocolumna]) == int(valores_ingresados[1])):
-                                estructura[f][numerocolumna] = tableValue
-                        '''
-                        #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
-                        nuevostr = ""
-                        #Lenar el string con los nuevos valores de el array bidimensional
-                        for k in range(0,int(num_rows)):
-                            for t in range(0,int(num_columns)):
-                                if (str(estructura[k][t]) == str(valores_ingresados[1])):
-                                    break;
-                                nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
-                            nuevostr = nuevostr + "\n"
 
-                        #Impresion del array Bidimensional
-                        print(estructura)
-                        #Impresion del string ingresado a la DB
-                        print(nuevostr)
+            #droppear la tabla
+            newFile = open(direccion + "/data.txt", "w")
+            #escribir en el archivo el nuevo string
+            for item in respuesta:
+                newFile.write(item + "\n")
+            newFile.close()
 
-                        #droppear la tabla
-                        #newFile = open(direccion + "/data.txt", "w")
-                        #escribir en el archivo el nuevo string
-                        #newFile.write(nuevostr)
-                        #newFile.close()
-                    except:
-                        print("Lastimosamente, no se encontro ese nombre de tupla en la base de datos")
-                if (status == ">"):
-                    print(">")
-                if (status == "<"):
-                    print("<")
-            except:
-                print("No hay condicional")
-
+            #Modificar el Schema para eliminar la columna tambien.
 
         else:
             print("No hay base de datos seleccionada")
