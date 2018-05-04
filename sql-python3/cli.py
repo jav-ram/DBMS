@@ -14,7 +14,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 
-userpath = '/databases/'
+userpath = 'databases/'
 db = ""
 
 tiposDatos = ['INT','FLOAT', 'DATE', 'CHAR']
@@ -402,6 +402,85 @@ class GeneralListener(sqlListener):
 
         else:
             print("Ninguna base de datos seleccionada")
+
+    def exitSelect_core(self, ctx:sqlParser.Select_coreContext):
+        #sacar las columnas que se quieren
+        columnas = []
+        for i in range (0, len(ctx.result_column())):
+            columnas.append(ctx.result_column()[i].getText())
+
+        #sacar la tabla sobre cual es el select
+        tabla = ctx.table_or_subquery()[0].getText()
+        direccion = userpath + "/" + db +"/"+ tabla
+        #verificar si existe columna y tabla
+        #tabla
+        existe = pathlib.Path(userpath + "/" + db +"/"+ tabla).exists()
+        if existe:
+            print("la tabla existe dentro de la base de datos " + db)
+            #columna
+            schemaFile = open(direccion + "/schema.json", "r")
+            schemaText = schemaFile.read()
+            schemaJSON = ast.literal_eval(schemaText)
+            schemaFile.close()
+            schemaData = schemaJSON['data']
+
+            num_rows = int(schemaJSON['registros'])
+            num_columns = len(schemaData)
+
+            schemaColumnas = []
+            #sacar los nombres en un array
+            for column in schemaData:
+                schemaColumnas.append(column['nombre'])
+            #verificadar que las columnas esten dentro
+            isIn = 0
+            indices = {}
+            todo = False
+            if len(columnas) == 1 and columnas[0] == "*":
+                todo = True
+                for data in schemaColumnas:
+                    indices[data] = schemaColumnas.index(data)
+            else:
+                for datas in columnas:
+                    if datas in schemaColumnas:
+                        isIn = isIn + 1
+                        indices[datas] = schemaColumnas.index(datas)
+            #print(indices)
+            if isIn == len(columnas) or todo:
+                print("estan dentro de la tabla ")
+                #sacar info
+                dataFile = open(direccion + "/data.txt", "r")
+                datatext = str(dataFile.read())
+                dataFile.close()
+
+                #Separar los datos de la base de datos por enter (cada objeto ingresado a la DB)
+                dataarray = datatext.split("\n")
+                #Hacer un array bidimensional para cada atributo de la DB
+                estructura = [[0 for x in range(int(num_columns))] for y in range(int(num_rows))]
+                #Llenar el array bidimensional con los datos de la DB
+                for y in range(0,len(dataarray)):
+                    columns = dataarray[y].split('|')
+                    for x in range(0,len(columns)-1):
+                        estructura[y][x]= str(columns[x])
+
+                #resultado de select
+                resultado = ""
+                #print(indices)
+                for j in range(0, len(dataarray)):
+                    cols = dataarray[j].split('|')
+                    for i in range(0, len(cols) - 1):
+                        for key, value in indices.items():
+                            if value == i:
+                                resultado = resultado + " | " + estructura[j][i] + " | "
+                    resultado = resultado + "\n"
+                #print(estructura)
+                print(resultado)
+            else:
+                print("no estan dentro de la tabla ")
+
+
+        else:
+            print("la tabla " + tabla + " no existe dentro de la base de datos " + db)
+
 
 
 class ParserException(Exception):
