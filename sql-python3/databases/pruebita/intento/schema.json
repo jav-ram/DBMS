@@ -1,1 +1,0 @@
-{'registros': '3', 'data': [{'nombre': 'id', 'type': 'INT', 'key': ''}, {'nombre': 'nombre', 'type': 'CHAR', 'key': ''}, {'nombre': 'numero', 'type': 'INT', 'key': ''}]}
