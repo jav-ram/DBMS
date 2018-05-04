@@ -511,6 +511,8 @@ class GeneralListener(sqlListener):
 
             print(valores_ingresados[0])
             print(valores_ingresados[1])
+            if status == "=":
+                status = "=="
             print(status)
 
 
@@ -521,15 +523,18 @@ class GeneralListener(sqlListener):
             num_rows = json['registros']
             schema.close()
             jsonColumn = json['data']
+            jsonRegistros = int(json['registros'])
             numerocolumna = 0
 
-            #Obtener el numero de columnas en la base de datos
-            for i in range (0, len(jsonColumn)):
-                #if (valores_ingresados[0] == jsonColumn[i]['nombre']):
-                numerocolumna = i
+            schemaColumnas = []
+            #sacar los nombres en un array
+            for column in jsonColumn:
+                schemaColumnas.append(column['nombre'])
 
+            indices = {}
+            if valores_ingresados[0] in schemaColumnas:
+                indices[valores_ingresados[0]] = schemaColumnas.index(valores_ingresados[0])
 
-            #Obtener los datos de la base de datos
             dataFile = open(direccion + "/data.txt", "r")
             datatext = str(dataFile.read())
             dataFile.close()
@@ -544,8 +549,33 @@ class GeneralListener(sqlListener):
                 for x in range(0,len(columns)-1):
                     estructura[y][x]= str(columns[x])
 
+            #resultado de select
+            resultadoIndices = []
             print(estructura)
 
+            for j in range(0, len(dataarray)):
+                columns = dataarray[j].split('|')
+                for i in range(0,len(columns)-1):
+                    for key, value in indices.items():
+                        #print(str(estructura[j][i]) + status + valores_ingresados[1])
+                        #print(eval(str(estructura[j][i]) + status + valores_ingresados[1]))
+                        if value == i:
+                            #print(estructura[j][i])
+                            if eval(str(estructura[j][i]) + status + valores_ingresados[1]):
+                                print(str(estructura[j][i]) + status + valores_ingresados[1])
+                                resultadoIndices.append(int(j))
+            resultado = ""
+            borrar = ""
+            respuesta = dataarray[:]
+            for j in range(len(dataarray) -1, -1, -1):
+                for i in resultadoIndices:
+                    if i == j:
+                        borrar = borrar + dataarray[j] + "\n"
+                        print("pop: " + str(respuesta.pop(j)))
+                    else:
+                        resultado = resultado + dataarray[j] + "\n"
+
+            print("respuesta " + str(respuesta) )
             try:
                 if (status == "="):
                     print("Es signo =")
