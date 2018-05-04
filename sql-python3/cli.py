@@ -482,6 +482,112 @@ class GeneralListener(sqlListener):
             print("la tabla " + tabla + " no existe dentro de la base de datos " + db)
 
 
+    def exitDelete_stmt(self, ctx:sqlParser.Delete_stmtContext):
+        global db
+        if db != "":
+            tableName = ctx.table_name().getText()
+            direccion = userpath + "/" + db +"/"+ tableName
+            tableValue = ctx.expr().getText()
+
+            print("Table_name: " + tableName)
+            print("Table_Value: " + tableValue)
+
+            #parsear los valores para obtener el nombre de columna, el condicional y el valor
+            token = 0
+            status = ""
+
+            token = tableValue.find("=")
+            if(token != -1):
+                valores_ingresados = tableValue.split("=")
+                status = "="
+            token = tableValue.find(">")
+            if(token != -1):
+                valores_ingresados = tableValue.split(">")
+                status = ">"
+            token = tableValue.find("<")
+            if(token != -1):
+                valores_ingresados = tableValue.split("<")
+                status = "<"
+
+            print(valores_ingresados[0])
+            print(valores_ingresados[1])
+            print(status)
+
+
+            schema = open(direccion + "/schema.json", "r")
+            text = schema.read()
+            json = ast.literal_eval(text)
+            num_columns = len(json['data'])
+            num_rows = json['registros']
+            schema.close()
+            jsonColumn = json['data']
+            numerocolumna = 0
+
+            #Obtener el numero de columnas en la base de datos
+            for i in range (0, len(jsonColumn)):
+                #if (valores_ingresados[0] == jsonColumn[i]['nombre']):
+                numerocolumna = i
+
+
+            #Obtener los datos de la base de datos
+            dataFile = open(direccion + "/data.txt", "r")
+            datatext = str(dataFile.read())
+            dataFile.close()
+
+            #Separar los datos de la base de datos por enter (cada objeto ingresado a la DB)
+            dataarray = datatext.split("\n")
+            #Hacer un array bidimensional para cada atributo de la DB
+            estructura = [[0 for x in range(int(num_columns))] for y in range(int(num_rows))]
+            #Llenar el array bidimensional con los datos de la DB
+            for y in range(0,len(dataarray)):
+                columns = dataarray[y].split('|')
+                for x in range(0,len(columns)-1):
+                    estructura[y][x]= str(columns[x])
+
+            print(estructura)
+
+            try:
+                if (status == "="):
+                    print("Es signo =")
+                    try:
+                        #Obtener los datos que cumplen con el nombre de la tupla ingresada
+                        '''
+                        for f in range(0, len(dataarray)-1):
+                            if (int(estructura[f][numerocolumna]) == int(valores_ingresados[1])):
+                                estructura[f][numerocolumna] = tableValue
+                        '''
+                        #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
+                        nuevostr = ""
+                        #Lenar el string con los nuevos valores de el array bidimensional
+                        for k in range(0,int(num_rows)):
+                            for t in range(0,int(num_columns)):
+                                if (str(estructura[k][t]) == str(valores_ingresados[1])):
+                                    break;
+                                nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
+                            nuevostr = nuevostr + "\n"
+
+                        #Impresion del array Bidimensional
+                        print(estructura)
+                        #Impresion del string ingresado a la DB
+                        print(nuevostr)
+
+                        #droppear la tabla
+                        #newFile = open(direccion + "/data.txt", "w")
+                        #escribir en el archivo el nuevo string
+                        #newFile.write(nuevostr)
+                        #newFile.close()
+                    except:
+                        print("Lastimosamente, no se encontro ese nombre de tupla en la base de datos")
+                if (status == ">"):
+                    print(">")
+                if (status == "<"):
+                    print("<")
+            except:
+                print("No hay condicional")
+
+
+        else:
+            print("No hay base de datos seleccionada")
 
 class ParserException(Exception):
     def __init__(self, value):
