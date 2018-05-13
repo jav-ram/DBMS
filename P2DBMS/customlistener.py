@@ -326,90 +326,32 @@ class GeneralListener(sqlListener):
                 condicional = newcondition[:1]
                 valor_condicional = newcondition[1:]
 
-                if (condicional == "="):
-                    print("Es signo =")
-                    try:
-                        #Obtener los datos que cumplen con el nombre de la tupla ingresada
-                        for f in range(0, len(dataarray)-1):
-                            if (int(estructura[f][numerocolumna]) == int(valor_condicional)):
-                                estructura[f][numerocolumna] = tableValue
 
-                        #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
-                        nuevostr = ""
-                        #Lenar el string con los nuevos valores de el array bidimensional
-                        for k in range(0,int(num_rows)):
-                            for t in range(0,int(num_columns)):
-                                nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
-                            nuevostr = nuevostr + "\n"
+                #Obtener los datos que cumplen con el nombre de la tupla ingresada
+                for f in range(0, len(dataarray)-1):
+                    print(f)
+                    if extra.where(estructura[f][numerocolumna], condicional, valor_condicional):
+                        estructura[f][numerocolumna] = tableValue
+                print("hola")
 
-                        #Impresion del array Bidimensional
-                        print(estructura)
-                        #Impresion del string ingresado a la DB
-                        print(nuevostr)
+                #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
+                nuevostr = ""
+                #Lenar el string con los nuevos valores de el array bidimensional
+                for k in range(0,int(num_rows)):
+                    for t in range(0,int(num_columns)):
+                        nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
+                    nuevostr = nuevostr + "\n"
 
-                        #droppear la tabla
-                        newFile = open(direccion + "/data.txt", "w")
-                        #escribir en el archivo el nuevo string
-                        newFile.write(nuevostr)
-                        newFile.close()
-                    except:
-                        print("Lastimosamente, no se encontro ese nombre de tupla en la base de datos")
-                if (condicional == ">"):
-                    print("Es signo >")
-                    try:
-                        #Obtener los datos que cumplen con el nombre de la tupla ingresada
-                        for f in range(0, len(dataarray)-1):
-                            if (int(estructura[f][numerocolumna]) > int(valor_condicional)):
-                                estructura[f][numerocolumna] = tableValue
+                #Impresion del array Bidimensional
+                print(estructura)
+                #Impresion del string ingresado a la DB
+                print(nuevostr)
 
-                        #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
-                        nuevostr = ""
-                        #Lenar el string con los nuevos valores de el array bidimensional
-                        for k in range(0,int(num_rows)):
-                            for t in range(0,int(num_columns)):
-                                nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
-                            nuevostr = nuevostr + "\n"
-
-                        #Impresion del array Bidimensional
-                        print(estructura)
-                        #Impresion del string ingresado a la DB
-                        print(nuevostr)
-
-                        #droppear la tabla
-                        newFile = open(direccion + "/data.txt", "w")
-                        #escribir en el archivo el nuevo string
-                        newFile.write(nuevostr)
-                        newFile.close()
-                    except:
-                        print("Lastimosamente, no se encontro ese nombre de tupla en la base de datos")
-                if (condicional == "<"):
-                    print("Es signo <")
-                    try:
-                        #Obtener los datos que cumplen con el nombre de la tupla ingresada
-                        for f in range(0, len(dataarray)-1):
-                            if (int(estructura[f][numerocolumna]) < int(valor_condicional)):
-                                estructura[f][numerocolumna] = tableValue
-
-                        #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
-                        nuevostr = ""
-                        #Lenar el string con los nuevos valores de el array bidimensional
-                        for k in range(0,int(num_rows)):
-                            for t in range(0,int(num_columns)):
-                                nuevostr = "" + nuevostr + str(estructura[k][t]) + "|"
-                            nuevostr = nuevostr + "\n"
-
-                        #Impresion del array Bidimensional
-                        print(estructura)
-                        #Impresion del string ingresado a la DB
-                        print(nuevostr)
-
-                        #droppear la tabla
-                        newFile = open(direccion + "/data.txt", "w")
-                        #escribir en el archivo el nuevo string
-                        newFile.write(nuevostr)
-                        newFile.close()
-                    except:
-                        print("Lastimosamente, no se encontro ese nombre de tupla en la base de datos")
+                #droppear la tabla
+                newFile = open(direccion + "/data.txt", "w")
+                #escribir en el archivo el nuevo string
+                newFile.write(nuevostr)
+                newFile.close()
             except:
                 print("No tiene condicional, Por lo tanto se opero en toda la columna")
                 #Obtener los datos que cumplen con el nombre de la tupla ingresada
@@ -536,6 +478,7 @@ class GeneralListener(sqlListener):
             direccion = userpath + "/" + db +"/"+ tableName
             # Se crea una variable para almacenar los valores de la tabla
             tableValue = ctx.expr().getText()
+            print(tableValue)
 
             #print("Table_name: " + tableName)
             #print("Table_Value: " + tableValue)
@@ -617,8 +560,8 @@ class GeneralListener(sqlListener):
                 for i in range(0,len(columns)-1):
                     for key, value in indices.items():
                         if value == i:
-                            if eval(str(estructura[j][i]) + status + valores_ingresados[1]):
-                                print(str(estructura[j][i]) + status + valores_ingresados[1])
+                            if extra.where(estructura[j][i], status, valores_ingresados[1]):
+                                #print(eval(str(estructura[j][i]) + status + valores_ingresados[1])==extra.where(estructura[j][i], status, valores_ingresados[1]))
                                 resultadoIndices.append(int(j))
             resultado = ""
             borrar = ""
@@ -628,10 +571,13 @@ class GeneralListener(sqlListener):
                 for i in resultadoIndices:
                     if i == j:
                         borrar = borrar + dataarray[j] + "\n"
+                        json['registros'] = ''+str(int(json['registros']) - 1)+''
                         print("pop: " + str(respuesta.pop(j)))
                     else:
                         resultado = resultado + dataarray[j] + "\n"
 
+            #resultado = resultado[:-1]
+            respuesta.pop(len(respuesta) - 1)
             print("respuesta " + str(respuesta) )
 
             #droppear la tabla
@@ -642,6 +588,8 @@ class GeneralListener(sqlListener):
             newFile.close()
 
             #Modificar el Schema para eliminar la columna tambien.
+            newSchema = open(direccion + "/schema.json", "w")
+            newSchema.write(str(json));
         # En caso de no tener una base de datos seleccionada
         else:
             print("No hay base de datos seleccionada")

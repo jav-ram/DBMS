@@ -45,3 +45,8 @@ def type_anything(texto_raw):
 def try_date():
     print(datetime.date(year=2000, month=2, day=30))
     return 0
+
+def where(valor, operador, comparador):
+    if operador == "=":
+        operador = "=="
+    return eval(str(valor) + operador + str(comparador))
