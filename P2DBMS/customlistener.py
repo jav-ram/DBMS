@@ -9,6 +9,7 @@ import sys
 import os
 import json
 import ast
+import re
 #para crear bases de datos  estoy usando pathlib ya no os
 import pathlib
 #para cualquier definicion de funcion que usemos
@@ -322,22 +323,47 @@ class GeneralListener(sqlListener):
             try:
                 #parse condition_raw
                 conditionRaw = ctx.expr()[1].getText()
-                newcondition = conditionRaw.replace(tableColumn, "")
-                condicional = newcondition[:1]
-                valor_condicional = newcondition[1:]
+                try:
+                    newcondition = conditionRaw.split("=")
+                    condicional = "="
+                except:
+                    try:
+                        newcondition = conditionRaw.split("<")
+                        condicional = "<"
+                    except:
+                        try:
+                            newcondition = conditionRaw.split(">")
+                            condicional = ">"
+                        except:
+                            print("No se reconoce condicional\n\nSolo se reconoce = > <")
+                if(len(newcondition) == 1):
+                    print("porfavor ingrese un espacio en el WHERE")
+                    return
+
+                print(condicional)
+                nombre_comparar = newcondition[0]
+                valor_condicional = newcondition[1]
+                print(valor_condicional)
 
                 print(condicional)
                 print(valor_condicional)
+
+                num_comparar = 0
+                #Obtener el numero de columnas en la base de datos
+                for i in range (0, len(jsonColumn)):
+                    #print(jsonColumn[i]['nombre'])
+                    if (nombre_comparar == jsonColumn[i]['nombre']):
+                        num_comparar = i
 
                 print(len(dataarray))
                 #Obtener los datos que cumplen con el nombre de la tupla ingresada
                 for f in range(0, len(dataarray)-2):
                     print(f)
                     #print(extra.where(estructura[f][numerocolumna], condicional, valor_condicional))
-                    if extra.where(estructura[f][numerocolumna], condicional, valor_condicional):
-                        print("adios")
-                        #estructura[f][numerocolumna] = str(tableValue)
-                print("hola")
+                    if extra.where(estructura[f][num_comparar], condicional, valor_condicional):
+                        #print("adios")
+                        estructura[f][numerocolumna] = str(tableValue)
+                #print("hola")
 
                 #crear un nuevo string para ingresar de nuevo a la base de datos luego de haberla operado
                 nuevostr = ""
@@ -357,7 +383,8 @@ class GeneralListener(sqlListener):
                 #escribir en el archivo el nuevo string
                 newFile.write(nuevostr)
                 newFile.close()
-            except:
+            except OSError as err:
+                print("OS error: {0}".format(err))
                 print("No tiene condicional, Por lo tanto se opero en toda la columna")
                 #Obtener los datos que cumplen con el nombre de la tupla ingresada
                 for f in range(0, len(dataarray)-1):

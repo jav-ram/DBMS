@@ -1,9 +1,9 @@
 3|z|aroma|2007|6|0.02|
-4|z|presion|2013|10|0.06|
-5|z|temperatura|2010|9|0.71|
-6|z|presion|2017|1|0.72|
-7|z|ruido|2012|11|0.29|
-8|z|ruido|2017|4|0.33|
-9|z|presion|2014|10|0.05|
-10|z|ruido|2007|4|0.65|
-11|z|humedad|2008|14|0.23|
+5|abcd|presion|2013|10|0.06|
+5|re|temperatura|2010|9|0.71|
+6|te|presion|2017|1|0.72|
+7|fg|ruido|2012|11|0.29|
+8|hghg|ruido|2017|4|0.33|
+5|fg5|presion|2014|10|0.05|
+10|tre|ruido|2007|4|0.65|
+11|try|humedad|2008|14|0.23|
