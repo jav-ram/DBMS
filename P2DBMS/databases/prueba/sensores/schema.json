@@ -1,0 +1,1 @@
+{'data': [{'nombre': 'id', 'key': '', 'type': 'INT'}, {'nombre': 'nombre', 'key': '', 'type': 'CHAR'}, {'nombre': 'uso', 'key': '', 'type': 'CHAR'}, {'nombre': 'modelo', 'key': '', 'type': 'INT'}, {'nombre': 'cantidad', 'key': '', 'type': 'INT'}, {'nombre': 'error', 'key': '', 'type': 'FLOAT'}], 'registros': '9'}

@@ -48,5 +48,6 @@ def try_date():
 
 def where(valor, operador, comparador):
     if operador == "=":
+        print("es una igualacion")
         operador = "=="
     return eval(str(valor) + operador + str(comparador))
