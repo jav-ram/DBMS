@@ -22,7 +22,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 # Se define la direccion de donde se estaran manejando las Bases de Datos
-userpath = 'databases/'
+userpath = '/databases/'
 db = ""
 
 # Se definen los tipos de datos que seran permitidos en el DBMS
@@ -193,7 +193,11 @@ class GeneralListener(sqlListener):
             if existe:
                 old_name = pathlib.Path(userpath + "/" + db + "/" + tableName)
                 #renombrar la tabla (archivos)
-                old_name.rename(userpath + "/" + db + "/"+ ctx.new_table_name().getText())
+                fullstmt = ctx.alter_table_specific_stmt().getText()
+                parse1 = fullstmt.replace('renameto', "")
+                parse2 = parse1.replace('RENAMETO', "")
+                print("nuevo nombre: " + parse2)
+                old_name.rename(userpath + "/" + db + "/"+ parse2)
 
             else:
                 print("No existe la tabla que se quiere renombrar")
@@ -561,6 +565,7 @@ class GeneralListener(sqlListener):
                 print (i);
         else:
             #producto cartesiano
+            print('Producto cartesiano')
 
 
     def exitDelete_stmt(self, ctx:sqlParser.Delete_stmtContext):
