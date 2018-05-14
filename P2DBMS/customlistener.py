@@ -473,6 +473,51 @@ class GeneralListener(sqlListener):
                     datatext = str(dataFile.read())
                     dataFile.close()
 
+                    isWhere = False;
+
+                    #sacar condicionales
+                    #parse condition_raw
+                    newcondition = ""
+                    condicional = ""
+
+                    try:
+                        conditionRaw = ctx.expr()[0].getText()
+
+                        isWhere = True
+                        try:
+                            newcondition = conditionRaw.split("=")
+                            condicional = "="
+                        except:
+                            try:
+                                newcondition = conditionRaw.split("<")
+                                condicional = "<"
+                            except:
+                                try:
+                                    newcondition = conditionRaw.split(">")
+                                    condicional = ">"
+                                except:
+                                    print("No se reconoce condicional\n\nSolo se reconoce = > <")
+                    except:
+                        isWhere = False;
+                    if(len(newcondition) == 1):
+                        print("porfavor ingrese un espacio en el WHERE")
+                        return
+
+
+                    nombre_comparar = ""
+                    valor_condicional = ""
+                    if isWhere:
+                        nombre_comparar = newcondition[0]
+                        valor_condicional = newcondition[1]
+
+
+                    num_comparar = 0
+                    #Obtener el numero de columnas en la base de datos
+                    for i in range (0, len(schemaJSON['data'])):
+                        #print(jsonColumn[i]['nombre'])
+                        if (nombre_comparar == schemaJSON['data'][i]['nombre']):
+                            num_comparar = i
+
                     #Separar los datos de la base de datos por enter (cada objeto ingresado a la DB)
                     dataarray = datatext.split("\n")
                     #Hacer un array bidimensional para cada atributo de la DB
@@ -488,11 +533,18 @@ class GeneralListener(sqlListener):
                     #print(indices)
                     for j in range(0, len(dataarray)):
                         cols = dataarray[j].split('|')
+                        isIn = False
+                        resultado_temp = ""
                         for i in range(0, len(cols) - 1):
+
                             for key, value in indices.items():
                                 if value == i:
-                                    resultado = resultado + " | " + estructura[j][i] + " | "
-                        resultado = resultado + "\n"
+                                    resultado_temp = resultado_temp + " | " + estructura[j][i] + " | "
+                                if isWhere and i == num_comparar:
+                                    if extra.where(estructura[j][i], condicional, valor_condicional):
+                                        isIn = True
+                        if isIn or isWhere == False:
+                            resultado = resultado + resultado_temp + "\n"
                     #print(estructura)
                     respuesta.append(resultado);
                     #print(resultado)
@@ -504,8 +556,11 @@ class GeneralListener(sqlListener):
             # En caso que la tabla seleccionada no exista dentro de la base de datos
             else:
                 print("la tabla " + tabla + " no existe dentro de la base de datos " + db)
-        for i in respuesta:
-            print (i);
+        if len(respuesta) == 1:
+            for i in respuesta:
+                print (i);
+        else:
+            #producto cartesiano
 
 
     def exitDelete_stmt(self, ctx:sqlParser.Delete_stmtContext):
