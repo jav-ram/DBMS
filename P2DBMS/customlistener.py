@@ -22,7 +22,7 @@ from sqlListener import sqlListener
 from antlr4.error.ErrorListener import ErrorListener
 
 # Se define la direccion de donde se estaran manejando las Bases de Datos
-userpath = '/databases/'
+userpath = 'databases/'
 db = ""
 
 # Se definen los tipos de datos que seran permitidos en el DBMS
@@ -252,6 +252,23 @@ class GeneralListener(sqlListener):
             schema.close()
             json = ast.literal_eval(text)
             schemaColumns = ast.literal_eval(text)['data']
+            num_columns = len(json['data'])
+            num_rows = json['registros']
+
+            #cargar data por si hay necesidad
+            dataFile = open(direccion + "/data.txt", "r")
+            data = dataFile.read()
+
+            #Separar los datos de la base de datos por enter (cada objeto ingresado a la DB)
+            dataarray = data.split("\n")
+            #Hacer un array bidimensional para cada atributo de la DB
+            estructura = [[0 for x in range(int(num_columns))] for y in range(int(num_rows))]
+            #Llenar el array bidimensional con los datos de la DB
+            for y in range(0,len(dataarray)):
+                columns = dataarray[y].split('|')
+                for x in range(0,len(columns)-1):
+                    estructura[y][x]= str(columns[x])
+
             if len(tableColumns) == len(tableValues) and len(tableValues) == len(schemaColumns):
                 #tienen la misma cantidad de valores
                 print ("La cantidad de valores ingresados coincide con el numero de tuplas de la tabla")
@@ -261,6 +278,12 @@ class GeneralListener(sqlListener):
                     if extra.type_anything(data.getText()) != schemaColumns[c]['type']:
                         print("El tipo esperado: " + schemaColumns[c]['type'] + ", se encontro: " + extra.type_anything(data.getText()))
                         return 1
+                    elif schemaColumns[c]['key'] == 'primary' and int(num_rows) > 0:
+                        #revisar la tabla
+                        for y in range(0, len(dataarray)-1):
+                            if estructura[y][c] == data.getText():
+                                print("No se ingreso el valor, porque la llave no es unica")
+                                return 2
                     dato = dato + data.getText() + "|"
                     c = c + 1
 
@@ -576,8 +599,30 @@ class GeneralListener(sqlListener):
             # Se establece la direccion donde esta guardada la tabla
             direccion = userpath + "/" + db +"/"+ tableName
             # Se crea una variable para almacenar los valores de la tabla
+            if ctx.expr() == None:
+                #no hay condicion
+                print("No se encontro una condición. Se BORRARA toda las tuplas")
+                #json
+                #leer
+                schemaFile = open(direccion + "/schema.json", "r")
+                schemaText = schemaFile.read()
+                schema = ast.literal_eval(schemaText)
+                schemaFile.close()
+                schema['registros'] = '' + str(0) + ''
+                #escribir
+                schemaFile2 = open(direccion + "/schema.json", "w")
+                schemaFile2.write(str(schema))
+                schemaFile2.close()
+
+
+                #data
+                dataFile = open(direccion + "/data.txt", "w")
+                dataFile.write("")
+                dataFile.close()
+
+                return 0
             tableValue = ctx.expr().getText()
-            print(tableValue)
+
 
             #print("Table_name: " + tableName)
             #print("Table_Value: " + tableValue)
